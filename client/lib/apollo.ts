@@ -99,7 +99,7 @@ export async function getSavedCompanies(
   page: number = 1,
 ): Promise<ApolloCompany[]> {
   try {
-    const response = await callApolloAPI("/accounts/organizations", "POST", {
+    const response = await callApolloAPI("/organizations", "POST", {
       limit,
       page,
     });
