@@ -3,31 +3,39 @@ import { Lead, Salesperson } from "@/hooks/useCRMStore";
 
 // LEADS OPERATIONS
 export async function getLeads(): Promise<Lead[]> {
-  const { data, error } = await supabase
-    .from("leads")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching leads:", error.message, error);
+    if (error) {
+      console.error("Error fetching leads - Code:", error.code, "Message:", error.message, "Details:", error.details);
+      // Return empty array instead of throwing to allow graceful degradation
+      return [];
+    }
+
+    if (!data) return [];
+
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      jobTitle: item.job_title,
+      company: item.company,
+      email: item.email,
+      phoneNumbers: item.phone_numbers || [],
+      actions: item.actions || [],
+      links: item.links || [],
+      locations: item.locations || [],
+      companyEmployees: item.company_employees,
+      companyIndustries: item.company_industries || [],
+      companyKeywords: item.company_keywords || [],
+      createdAt: item.created_at,
+    }));
+  } catch (err) {
+    console.error("Exception fetching leads:", err);
     return [];
   }
-
-  return (data || []).map((item: any) => ({
-    id: item.id,
-    name: item.name,
-    jobTitle: item.job_title,
-    company: item.company,
-    email: item.email,
-    phoneNumbers: item.phone_numbers || [],
-    actions: item.actions || [],
-    links: item.links || [],
-    locations: item.locations || [],
-    companyEmployees: item.company_employees,
-    companyIndustries: item.company_industries || [],
-    companyKeywords: item.company_keywords || [],
-    createdAt: item.created_at,
-  }));
 }
 
 export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
@@ -110,23 +118,31 @@ export async function deleteLead(id: string) {
 
 // SALESPERSONS OPERATIONS
 export async function getSalespersons(): Promise<Salesperson[]> {
-  const { data, error } = await supabase
-    .from("salespersons")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from("salespersons")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching salespersons:", error.message, error);
+    if (error) {
+      console.error("Error fetching salespersons - Code:", error.code, "Message:", error.message, "Details:", error.details);
+      // Return empty array instead of throwing to allow graceful degradation
+      return [];
+    }
+
+    if (!data) return [];
+
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      phoneNumber: item.phone_number,
+      createdAt: item.created_at,
+    }));
+  } catch (err) {
+    console.error("Exception fetching salespersons:", err);
     return [];
   }
-
-  return (data || []).map((item: any) => ({
-    id: item.id,
-    name: item.name,
-    email: item.email,
-    phoneNumber: item.phone_number,
-    createdAt: item.created_at,
-  }));
 }
 
 export async function addSalesperson(salesperson: Omit<Salesperson, "id" | "createdAt">) {
