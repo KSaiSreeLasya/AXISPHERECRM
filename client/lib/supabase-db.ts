@@ -233,3 +233,142 @@ export async function deleteSalesperson(id: string) {
     throw error;
   }
 }
+
+// COMPANIES OPERATIONS
+export async function getCompanies(): Promise<Company[]> {
+  try {
+    const { data, error } = await supabase
+      .from("companies")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching companies - Code:", error.code, "Message:", error.message);
+      return [];
+    }
+
+    if (!data) return [];
+
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      apolloId: item.apollo_id,
+      name: item.name,
+      domain: item.domain,
+      industry: item.industry,
+      employeeCount: item.employee_count,
+      employeeCountRange: item.employee_count_range,
+      revenue: item.revenue,
+      revenueRange: item.revenue_range,
+      logoUrl: item.logo_url,
+      linkedinUrl: item.linkedin_url,
+      crunchbaseUrl: item.crunchbase_url,
+      foundedYear: item.founded_year,
+      hqAddress: item.hq_address,
+      countries: item.countries,
+      website: item.website,
+      phone: item.phone,
+      createdAt: item.created_at,
+    }));
+  } catch (err) {
+    console.error("Exception fetching companies:", err);
+    return [];
+  }
+}
+
+export async function addCompany(apolloCompany: ApolloCompany): Promise<Company> {
+  try {
+    // Check if company already exists
+    const { data: existing } = await supabase
+      .from("companies")
+      .select("id")
+      .eq("apollo_id", apolloCompany.id)
+      .single();
+
+    if (existing) {
+      // Return existing company
+      const { data } = await supabase
+        .from("companies")
+        .select("*")
+        .eq("apollo_id", apolloCompany.id)
+        .single();
+
+      return mapCompanyData(data);
+    }
+
+    // Add new company
+    const { data, error } = await supabase
+      .from("companies")
+      .insert([
+        {
+          apollo_id: apolloCompany.id,
+          name: apolloCompany.name,
+          domain: apolloCompany.domain,
+          industry: apolloCompany.industry,
+          employee_count: apolloCompany.employee_count,
+          employee_count_range: apolloCompany.employee_count_range,
+          revenue: apolloCompany.revenue,
+          revenue_range: apolloCompany.revenue_range,
+          logo_url: apolloCompany.logo_url,
+          linkedin_url: apolloCompany.linkedin_url,
+          crunchbase_url: apolloCompany.crunchbase_url,
+          founded_year: apolloCompany.founded_year,
+          hq_address: apolloCompany.hq_address,
+          countries: apolloCompany.countries,
+          website: apolloCompany.website,
+          phone: apolloCompany.phone,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Error adding company:", error);
+      throw new Error(`Failed to add company: ${error.message}`);
+    }
+
+    return mapCompanyData(data);
+  } catch (err) {
+    console.error("Exception adding company:", err);
+    throw err;
+  }
+}
+
+export async function deleteCompany(id: string) {
+  try {
+    const { error } = await supabase
+      .from("companies")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("Error deleting company:", error);
+      throw error;
+    }
+  } catch (err) {
+    console.error("Exception deleting company:", err);
+    throw err;
+  }
+}
+
+function mapCompanyData(data: any): Company {
+  return {
+    id: data.id,
+    apolloId: data.apollo_id,
+    name: data.name,
+    domain: data.domain,
+    industry: data.industry,
+    employeeCount: data.employee_count,
+    employeeCountRange: data.employee_count_range,
+    revenue: data.revenue,
+    revenueRange: data.revenue_range,
+    logoUrl: data.logo_url,
+    linkedinUrl: data.linkedin_url,
+    crunchbaseUrl: data.crunchbase_url,
+    foundedYear: data.founded_year,
+    hqAddress: data.hq_address,
+    countries: data.countries,
+    website: data.website,
+    phone: data.phone,
+    createdAt: data.created_at,
+  };
+}
