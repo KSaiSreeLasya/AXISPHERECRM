@@ -1,5 +1,27 @@
 import { supabase } from "./supabase";
 import { Lead, Salesperson } from "@/hooks/useCRMStore";
+import { ApolloCompany } from "./apollo";
+
+export interface Company {
+  id: string;
+  apolloId?: string;
+  name: string;
+  domain: string;
+  industry: string;
+  employeeCount?: number;
+  employeeCountRange?: string;
+  revenue?: number;
+  revenueRange?: string;
+  logoUrl?: string;
+  linkedinUrl?: string;
+  crunchbaseUrl?: string;
+  foundedYear?: number;
+  hqAddress?: string;
+  countries?: string[];
+  website?: string;
+  phone?: string;
+  createdAt: string;
+}
 
 // LEADS OPERATIONS
 export async function getLeads(): Promise<Lead[]> {
