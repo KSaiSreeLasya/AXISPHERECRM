@@ -1,10 +1,3 @@
-const APOLLO_API_KEY = import.meta.env.VITE_APOLLO_API_KEY;
-const APOLLO_BASE_URL = "https://api.apollo.io/v1";
-
-if (!APOLLO_API_KEY) {
-  console.warn("Apollo.io API key is not configured");
-}
-
 export interface ApolloCompany {
   id: string;
   name: string;
@@ -38,22 +31,20 @@ async function callApolloAPI(
   method: "GET" | "POST" = "POST",
   body?: Record<string, any>,
 ): Promise<any> {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${APOLLO_API_KEY}`,
-  };
-
   const options: RequestInit = {
-    method,
-    headers,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      endpoint,
+      method,
+      body,
+    }),
   };
-
-  if (body && method === "POST") {
-    options.body = JSON.stringify(body);
-  }
 
   try {
-    const response = await fetch(`${APOLLO_BASE_URL}${endpoint}`, options);
+    const response = await fetch("/api/apollo", options);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
