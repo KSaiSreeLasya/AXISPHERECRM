@@ -39,46 +39,51 @@ export async function getLeads(): Promise<Lead[]> {
 }
 
 export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
-  const { data, error } = await supabase
-    .from("leads")
-    .insert([
-      {
-        name: lead.name,
-        job_title: lead.jobTitle,
-        company: lead.company,
-        email: lead.email,
-        phone_numbers: lead.phoneNumbers,
-        actions: lead.actions,
-        links: lead.links,
-        locations: lead.locations,
-        company_employees: lead.companyEmployees,
-        company_industries: lead.companyIndustries,
-        company_keywords: lead.companyKeywords,
-      },
-    ])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from("leads")
+      .insert([
+        {
+          name: lead.name,
+          job_title: lead.jobTitle,
+          company: lead.company,
+          email: lead.email,
+          phone_numbers: lead.phoneNumbers.filter(p => p),
+          actions: lead.actions.filter(a => a),
+          links: lead.links.filter(l => l),
+          locations: lead.locations.filter(l => l),
+          company_employees: lead.companyEmployees,
+          company_industries: lead.companyIndustries.filter(i => i),
+          company_keywords: lead.companyKeywords.filter(k => k),
+        },
+      ])
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error adding lead:", error);
-    throw error;
+    if (error) {
+      console.error("Error adding lead - Code:", error.code, "Message:", error.message);
+      throw new Error(`Failed to add lead: ${error.message}`);
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      jobTitle: data.job_title,
+      company: data.company,
+      email: data.email,
+      phoneNumbers: data.phone_numbers,
+      actions: data.actions,
+      links: data.links,
+      locations: data.locations,
+      companyEmployees: data.company_employees,
+      companyIndustries: data.company_industries,
+      companyKeywords: data.company_keywords,
+      createdAt: data.created_at,
+    };
+  } catch (err) {
+    console.error("Exception adding lead:", err);
+    throw err;
   }
-
-  return {
-    id: data.id,
-    name: data.name,
-    jobTitle: data.job_title,
-    company: data.company,
-    email: data.email,
-    phoneNumbers: data.phone_numbers,
-    actions: data.actions,
-    links: data.links,
-    locations: data.locations,
-    companyEmployees: data.company_employees,
-    companyIndustries: data.company_industries,
-    companyKeywords: data.company_keywords,
-    createdAt: data.created_at,
-  };
 }
 
 export async function updateLead(id: string, updates: Partial<Lead>) {
@@ -146,30 +151,35 @@ export async function getSalespersons(): Promise<Salesperson[]> {
 }
 
 export async function addSalesperson(salesperson: Omit<Salesperson, "id" | "createdAt">) {
-  const { data, error } = await supabase
-    .from("salespersons")
-    .insert([
-      {
-        name: salesperson.name,
-        email: salesperson.email,
-        phone_number: salesperson.phoneNumber,
-      },
-    ])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from("salespersons")
+      .insert([
+        {
+          name: salesperson.name,
+          email: salesperson.email,
+          phone_number: salesperson.phoneNumber,
+        },
+      ])
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error adding salesperson:", error);
-    throw error;
+    if (error) {
+      console.error("Error adding salesperson - Code:", error.code, "Message:", error.message);
+      throw new Error(`Failed to add salesperson: ${error.message}`);
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      phoneNumber: data.phone_number,
+      createdAt: data.created_at,
+    };
+  } catch (err) {
+    console.error("Exception adding salesperson:", err);
+    throw err;
   }
-
-  return {
-    id: data.id,
-    name: data.name,
-    email: data.email,
-    phoneNumber: data.phone_number,
-    createdAt: data.created_at,
-  };
 }
 
 export async function updateSalesperson(id: string, updates: Partial<Salesperson>) {
