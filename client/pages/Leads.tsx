@@ -135,12 +135,12 @@ export default function Leads() {
       | "companyKeywords"
     >,
     index: number,
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: (prev[field as any] || []).map((item: string, i: number) =>
-        i === index ? value : item
+        i === index ? value : item,
       ),
     }));
   };
@@ -154,7 +154,7 @@ export default function Leads() {
       | "locations"
       | "companyIndustries"
       | "companyKeywords"
-    >
+    >,
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -172,12 +172,12 @@ export default function Leads() {
       | "companyIndustries"
       | "companyKeywords"
     >,
-    index: number
+    index: number,
   ) => {
     setFormData((prev) => ({
       ...prev,
       [field]: (prev[field as any] || []).filter(
-        (_: string, i: number) => i !== index
+        (_: string, i: number) => i !== index,
       ),
     }));
   };
@@ -387,7 +387,11 @@ export default function Leads() {
                       placeholder="Industry"
                       value={industry}
                       onChange={(e) =>
-                        updateArrayField("companyIndustries", idx, e.target.value)
+                        updateArrayField(
+                          "companyIndustries",
+                          idx,
+                          e.target.value,
+                        )
                       }
                       className="flex-1"
                     />
@@ -396,7 +400,9 @@ export default function Leads() {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => removeArrayField("companyIndustries", idx)}
+                        onClick={() =>
+                          removeArrayField("companyIndustries", idx)
+                        }
                       >
                         <X className="w-4 h-4" />
                       </Button>
@@ -559,7 +565,9 @@ export default function Leads() {
         <div className="grid gap-4">
           {leads.length === 0 ? (
             <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
-              <p className="text-slate-600">No leads yet. Add one to get started!</p>
+              <p className="text-slate-600">
+                No leads yet. Add one to get started!
+              </p>
             </div>
           ) : (
             leads.map((lead) => (

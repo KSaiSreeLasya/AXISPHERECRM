@@ -50,7 +50,7 @@ export function MainLayout({ children }: LayoutProps) {
                     "flex items-center gap-2 px-1 py-4 text-sm font-medium border-b-2 transition-colors",
                     isActive
                       ? "border-blue-600 text-blue-600"
-                      : "border-transparent text-slate-600 hover:text-slate-900"
+                      : "border-transparent text-slate-600 hover:text-slate-900",
                   )}
                 >
                   <Icon className="w-4 h-4" />

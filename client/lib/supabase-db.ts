@@ -32,7 +32,14 @@ export async function getLeads(): Promise<Lead[]> {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching leads - Code:", error.code, "Message:", error.message, "Details:", error.details);
+      console.error(
+        "Error fetching leads - Code:",
+        error.code,
+        "Message:",
+        error.message,
+        "Details:",
+        error.details,
+      );
       // Return empty array instead of throwing to allow graceful degradation
       return [];
     }
@@ -70,20 +77,25 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
           job_title: lead.jobTitle,
           company: lead.company,
           email: lead.email,
-          phone_numbers: lead.phoneNumbers.filter(p => p),
-          actions: lead.actions.filter(a => a),
-          links: lead.links.filter(l => l),
-          locations: lead.locations.filter(l => l),
+          phone_numbers: lead.phoneNumbers.filter((p) => p),
+          actions: lead.actions.filter((a) => a),
+          links: lead.links.filter((l) => l),
+          locations: lead.locations.filter((l) => l),
           company_employees: lead.companyEmployees,
-          company_industries: lead.companyIndustries.filter(i => i),
-          company_keywords: lead.companyKeywords.filter(k => k),
+          company_industries: lead.companyIndustries.filter((i) => i),
+          company_keywords: lead.companyKeywords.filter((k) => k),
         },
       ])
       .select()
       .single();
 
     if (error) {
-      console.error("Error adding lead - Code:", error.code, "Message:", error.message);
+      console.error(
+        "Error adding lead - Code:",
+        error.code,
+        "Message:",
+        error.message,
+      );
       throw new Error(`Failed to add lead: ${error.message}`);
     }
 
@@ -110,18 +122,22 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
 
 export async function updateLead(id: string, updates: Partial<Lead>) {
   const updateData: any = {};
-  
+
   if (updates.name !== undefined) updateData.name = updates.name;
   if (updates.jobTitle !== undefined) updateData.job_title = updates.jobTitle;
   if (updates.company !== undefined) updateData.company = updates.company;
   if (updates.email !== undefined) updateData.email = updates.email;
-  if (updates.phoneNumbers !== undefined) updateData.phone_numbers = updates.phoneNumbers;
+  if (updates.phoneNumbers !== undefined)
+    updateData.phone_numbers = updates.phoneNumbers;
   if (updates.actions !== undefined) updateData.actions = updates.actions;
   if (updates.links !== undefined) updateData.links = updates.links;
   if (updates.locations !== undefined) updateData.locations = updates.locations;
-  if (updates.companyEmployees !== undefined) updateData.company_employees = updates.companyEmployees;
-  if (updates.companyIndustries !== undefined) updateData.company_industries = updates.companyIndustries;
-  if (updates.companyKeywords !== undefined) updateData.company_keywords = updates.companyKeywords;
+  if (updates.companyEmployees !== undefined)
+    updateData.company_employees = updates.companyEmployees;
+  if (updates.companyIndustries !== undefined)
+    updateData.company_industries = updates.companyIndustries;
+  if (updates.companyKeywords !== undefined)
+    updateData.company_keywords = updates.companyKeywords;
 
   const { error } = await supabase
     .from("leads")
@@ -152,7 +168,14 @@ export async function getSalespersons(): Promise<Salesperson[]> {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching salespersons - Code:", error.code, "Message:", error.message, "Details:", error.details);
+      console.error(
+        "Error fetching salespersons - Code:",
+        error.code,
+        "Message:",
+        error.message,
+        "Details:",
+        error.details,
+      );
       // Return empty array instead of throwing to allow graceful degradation
       return [];
     }
@@ -172,7 +195,9 @@ export async function getSalespersons(): Promise<Salesperson[]> {
   }
 }
 
-export async function addSalesperson(salesperson: Omit<Salesperson, "id" | "createdAt">) {
+export async function addSalesperson(
+  salesperson: Omit<Salesperson, "id" | "createdAt">,
+) {
   try {
     const { data, error } = await supabase
       .from("salespersons")
@@ -187,7 +212,12 @@ export async function addSalesperson(salesperson: Omit<Salesperson, "id" | "crea
       .single();
 
     if (error) {
-      console.error("Error adding salesperson - Code:", error.code, "Message:", error.message);
+      console.error(
+        "Error adding salesperson - Code:",
+        error.code,
+        "Message:",
+        error.message,
+      );
       throw new Error(`Failed to add salesperson: ${error.message}`);
     }
 
@@ -204,12 +234,16 @@ export async function addSalesperson(salesperson: Omit<Salesperson, "id" | "crea
   }
 }
 
-export async function updateSalesperson(id: string, updates: Partial<Salesperson>) {
+export async function updateSalesperson(
+  id: string,
+  updates: Partial<Salesperson>,
+) {
   const updateData: any = {};
-  
+
   if (updates.name !== undefined) updateData.name = updates.name;
   if (updates.email !== undefined) updateData.email = updates.email;
-  if (updates.phoneNumber !== undefined) updateData.phone_number = updates.phoneNumber;
+  if (updates.phoneNumber !== undefined)
+    updateData.phone_number = updates.phoneNumber;
 
   const { error } = await supabase
     .from("salespersons")
@@ -223,10 +257,7 @@ export async function updateSalesperson(id: string, updates: Partial<Salesperson
 }
 
 export async function deleteSalesperson(id: string) {
-  const { error } = await supabase
-    .from("salespersons")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("salespersons").delete().eq("id", id);
 
   if (error) {
     console.error("Error deleting salesperson:", error);
@@ -243,7 +274,12 @@ export async function getCompanies(): Promise<Company[]> {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching companies - Code:", error.code, "Message:", error.message);
+      console.error(
+        "Error fetching companies - Code:",
+        error.code,
+        "Message:",
+        error.message,
+      );
       return [];
     }
 
@@ -275,7 +311,9 @@ export async function getCompanies(): Promise<Company[]> {
   }
 }
 
-export async function addCompany(apolloCompany: ApolloCompany): Promise<Company> {
+export async function addCompany(
+  apolloCompany: ApolloCompany,
+): Promise<Company> {
   try {
     // Check if company already exists
     const { data: existing } = await supabase
@@ -335,10 +373,7 @@ export async function addCompany(apolloCompany: ApolloCompany): Promise<Company>
 
 export async function deleteCompany(id: string) {
   try {
-    const { error } = await supabase
-      .from("companies")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("companies").delete().eq("id", id);
 
     if (error) {
       console.error("Error deleting company:", error);

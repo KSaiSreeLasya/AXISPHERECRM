@@ -2,12 +2,7 @@ import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ExternalLink,
   Plus,
@@ -17,10 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  searchCompanies,
-  ApolloCompany,
-} from "@/lib/apollo";
+import { searchCompanies, ApolloCompany } from "@/lib/apollo";
 import {
   getCompanies,
   addCompany,

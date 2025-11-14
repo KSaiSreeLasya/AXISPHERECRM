@@ -71,22 +71,19 @@ export function useCRMStore() {
     }
   }, []);
 
-  const updateLead = useCallback(
-    async (id: string, updates: Partial<Lead>) => {
-      try {
-        await supabaseUpdateLead(id, updates);
-        setLeads((prevLeads) =>
-          prevLeads.map((lead) =>
-            lead.id === id ? { ...lead, ...updates } : lead
-          )
-        );
-      } catch (error) {
-        console.error("Error updating lead:", error);
-        throw error;
-      }
-    },
-    []
-  );
+  const updateLead = useCallback(async (id: string, updates: Partial<Lead>) => {
+    try {
+      await supabaseUpdateLead(id, updates);
+      setLeads((prevLeads) =>
+        prevLeads.map((lead) =>
+          lead.id === id ? { ...lead, ...updates } : lead,
+        ),
+      );
+    } catch (error) {
+      console.error("Error updating lead:", error);
+      throw error;
+    }
+  }, []);
 
   const deleteLead = useCallback(async (id: string) => {
     try {
@@ -112,7 +109,7 @@ export function useCRMStore() {
         throw error;
       }
     },
-    []
+    [],
   );
 
   const updateSalesperson = useCallback(
@@ -121,22 +118,22 @@ export function useCRMStore() {
         await supabaseUpdateSalesperson(id, updates);
         setSalespersons((prevSalespersons) =>
           prevSalespersons.map((sp) =>
-            sp.id === id ? { ...sp, ...updates } : sp
-          )
+            sp.id === id ? { ...sp, ...updates } : sp,
+          ),
         );
       } catch (error) {
         console.error("Error updating salesperson:", error);
         throw error;
       }
     },
-    []
+    [],
   );
 
   const deleteSalesperson = useCallback(async (id: string) => {
     try {
       await supabaseDeleteSalesperson(id);
       setSalespersons((prevSalespersons) =>
-        prevSalespersons.filter((sp) => sp.id !== id)
+        prevSalespersons.filter((sp) => sp.id !== id),
       );
     } catch (error) {
       console.error("Error deleting salesperson:", error);

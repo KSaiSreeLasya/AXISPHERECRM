@@ -7,13 +7,19 @@ import { Users, UserCheck, TrendingUp, Calendar } from "lucide-react";
 export default function Index() {
   const { leads, salespersons } = useCRMStore();
 
-  const recentLeads = [...leads].sort((a, b) => 
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  ).slice(0, 5);
+  const recentLeads = [...leads]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 5);
 
-  const recentSalespersons = [...salespersons].sort((a, b) =>
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  ).slice(0, 5);
+  const recentSalespersons = [...salespersons]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 5);
 
   const stats = [
     {
@@ -32,7 +38,10 @@ export default function Index() {
     },
     {
       label: "Leads per Sales Person",
-      value: salespersons.length > 0 ? (leads.length / salespersons.length).toFixed(1) : "0",
+      value:
+        salespersons.length > 0
+          ? (leads.length / salespersons.length).toFixed(1)
+          : "0",
       icon: TrendingUp,
       color: "bg-purple-100 text-purple-600",
     },
@@ -68,11 +77,7 @@ export default function Index() {
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <Link
-                key={stat.label}
-                to={stat.href || "#"}
-                className="group"
-              >
+              <Link key={stat.label} to={stat.href || "#"} className="group">
                 <div className="bg-white rounded-lg border border-slate-200 p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-slate-600 font-medium">{stat.label}</h3>

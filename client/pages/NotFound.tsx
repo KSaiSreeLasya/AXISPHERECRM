@@ -21,7 +21,11 @@ const NotFound = () => {
           <h1 className="text-6xl font-bold text-slate-900 mb-2">404</h1>
           <p className="text-2xl text-slate-600 mb-2">Page not found</p>
           <p className="text-slate-600 mb-8">
-            The page <code className="bg-slate-100 px-2 py-1 rounded text-red-600">{location.pathname}</code> doesn't exist.
+            The page{" "}
+            <code className="bg-slate-100 px-2 py-1 rounded text-red-600">
+              {location.pathname}
+            </code>{" "}
+            doesn't exist.
           </p>
           <Link to="/">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white">

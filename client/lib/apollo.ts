@@ -36,7 +36,7 @@ export interface ApolloSearchParams {
 async function callApolloAPI(
   endpoint: string,
   method: "GET" | "POST" = "POST",
-  body?: Record<string, any>
+  body?: Record<string, any>,
 ): Promise<any> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -60,7 +60,7 @@ async function callApolloAPI(
       throw new Error(
         `Apollo API error: ${response.status} - ${
           errorData.message || errorData.error || "Unknown error"
-        }`
+        }`,
       );
     }
 
@@ -72,7 +72,7 @@ async function callApolloAPI(
 }
 
 export async function searchCompanies(
-  params: ApolloSearchParams
+  params: ApolloSearchParams,
 ): Promise<ApolloCompany[]> {
   try {
     const response = await callApolloAPI("/mixed_companies/search", "POST", {
@@ -89,12 +89,12 @@ export async function searchCompanies(
 }
 
 export async function getCompanyDetails(
-  organizationId: string
+  organizationId: string,
 ): Promise<ApolloCompany> {
   try {
     const response = await callApolloAPI(
       `/organizations/${organizationId}`,
-      "GET"
+      "GET",
     );
     return response.organization || response;
   } catch (error) {
@@ -105,7 +105,7 @@ export async function getCompanyDetails(
 
 export async function getSavedCompanies(
   limit: number = 20,
-  page: number = 1
+  page: number = 1,
 ): Promise<ApolloCompany[]> {
   try {
     const response = await callApolloAPI("/organizations", "POST", {
