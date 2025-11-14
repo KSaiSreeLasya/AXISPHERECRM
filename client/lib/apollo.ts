@@ -95,15 +95,40 @@ export async function getCompanyDetails(
 }
 
 export async function getSavedCompanies(
-  limit: number = 20,
+  limit: number = 100,
   page: number = 1,
 ): Promise<ApolloCompany[]> {
   try {
-    const response = await callApolloAPI("/organizations", "POST", {
+    const response = await callApolloAPI("/mixed_companies", "POST", {
       limit,
       page,
+      person_titles: [],
     });
-    return response.organizations || [];
+
+    const organizations = response.organizations || [];
+
+    if (organizations.length === 0) {
+      console.log("No saved companies found in Apollo");
+    }
+
+    return organizations.map((org: any) => ({
+      id: org.id,
+      name: org.name,
+      domain: org.domain,
+      industry: org.industry,
+      employee_count: org.employee_count,
+      employee_count_range: org.employee_count_range,
+      revenue: org.revenue,
+      revenue_range: org.revenue_range,
+      logo_url: org.logo_url,
+      linkedin_url: org.linkedin_url,
+      crunchbase_url: org.crunchbase_url,
+      founded_year: org.founded_year,
+      hq_address: org.hq_address,
+      countries: org.countries,
+      website: org.website,
+      phone: org.phone,
+    }));
   } catch (error) {
     console.error("Error fetching saved companies:", error);
     throw error;
