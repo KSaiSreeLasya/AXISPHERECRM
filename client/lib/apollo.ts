@@ -99,20 +99,19 @@ export async function getSavedCompanies(
   page: number = 1,
 ): Promise<ApolloCompany[]> {
   try {
-    const response = await callApolloAPI("/mixed_companies", "POST", {
+    const response = await callApolloAPI("/accounts/organizations", "POST", {
       limit,
       page,
-      person_titles: [],
     });
 
-    const organizations = response.organizations || [];
+    const organizations = response.organizations || response.accounts || [];
 
     if (organizations.length === 0) {
       console.log("No saved companies found in Apollo");
     }
 
     return organizations.map((org: any) => ({
-      id: org.id,
+      id: org.id || org.organization_id,
       name: org.name,
       domain: org.domain,
       industry: org.industry,
