@@ -12,7 +12,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { searchCompanies, ApolloCompany } from "@/lib/apollo";
+import { searchCompanies, getSavedCompanies, ApolloCompany } from "@/lib/apollo";
 import {
   getCompanies,
   addCompany,
