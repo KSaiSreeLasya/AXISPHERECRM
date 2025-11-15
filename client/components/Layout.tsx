@@ -39,7 +39,9 @@ export function MainLayout({ children }: LayoutProps) {
             {user && (
               <div className="flex items-center gap-4">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-slate-900">{user.name}</p>
+                  <p className="text-sm font-medium text-slate-900">
+                    {user.name}
+                  </p>
                   <p className="text-xs text-slate-500">{user.email}</p>
                 </div>
                 <Button
@@ -99,8 +101,12 @@ export function MainLayout({ children }: LayoutProps) {
               className="h-8 w-auto"
             />
             <div>
-              <p className="text-sm font-semibold text-slate-900">Axisphere Sales CRM</p>
-              <p className="text-xs text-slate-500">Manage your sales pipeline efficiently</p>
+              <p className="text-sm font-semibold text-slate-900">
+                Axisphere Sales CRM
+              </p>
+              <p className="text-xs text-slate-500">
+                Manage your sales pipeline efficiently
+              </p>
             </div>
           </div>
           <div className="border-t border-slate-200 pt-6 text-center">

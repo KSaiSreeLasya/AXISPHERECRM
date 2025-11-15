@@ -84,12 +84,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp(
-        {
-          email,
-          password,
-        },
-      );
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
       if (authError) throw authError;
 

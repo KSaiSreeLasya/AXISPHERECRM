@@ -51,7 +51,7 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <div className="mb-8 text-center">
-            <img 
+            <img
               src="https://cdn.builder.io/api/v1/image/assets%2F59bf3e928fc9473a97d5e87470c824bb%2F8211d605de7443fb8fd45193578c775d?format=webp&width=800"
               alt="Axisphere Logo"
               className="h-12 w-auto mx-auto mb-4"
@@ -94,9 +94,7 @@ export default function Login() {
               className="w-full bg-blue-600 hover:bg-blue-700 text-white"
               disabled={isLoading}
             >
-              {isLoading && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              )}
+              {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>

@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/Layout";
-import { Lead, Salesperson, useCRMStore, LeadStatus } from "@/hooks/useCRMStore";
+import {
+  Lead,
+  Salesperson,
+  useCRMStore,
+  LeadStatus,
+} from "@/hooks/useCRMStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit2, Plus, X, Loader2 } from "lucide-react";
@@ -26,11 +31,12 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
   "Site visit": "bg-purple-100 text-purple-800",
   "Advance payment": "bg-orange-100 text-orange-800",
   "Lead finished": "bg-green-100 text-green-800",
-  "Contacted": "bg-cyan-100 text-cyan-800",
+  Contacted: "bg-cyan-100 text-cyan-800",
 };
 
 export default function Leads() {
-  const { leads, salespersons, addLead, deleteLead, updateLead, isLoading } = useCRMStore();
+  const { leads, salespersons, addLead, deleteLead, updateLead, isLoading } =
+    useCRMStore();
   const { user } = useAuth();
   const { toast } = useToast();
   const [showForm, setShowForm] = useState(false);
@@ -159,7 +165,9 @@ export default function Leads() {
     }
 
     try {
-      const leadsPerPerson = Math.ceil(unassignedLeads.length / salespersons.length);
+      const leadsPerPerson = Math.ceil(
+        unassignedLeads.length / salespersons.length,
+      );
       let salesPersonIndex = 0;
       let leadsAssignedThisPerson = 0;
 
@@ -221,7 +229,10 @@ export default function Leads() {
     if (!lead) return;
 
     try {
-      await updateLead(leadId, { ...lead, assignedTo: salesPersonId || undefined });
+      await updateLead(leadId, {
+        ...lead,
+        assignedTo: salesPersonId || undefined,
+      });
       toast({
         title: "Success",
         description: "Lead assignment updated",
@@ -474,7 +485,10 @@ export default function Leads() {
                     type="date"
                     value={formData.nextReminderDate || ""}
                     onChange={(e) =>
-                      setFormData({ ...formData, nextReminderDate: e.target.value })
+                      setFormData({
+                        ...formData,
+                        nextReminderDate: e.target.value,
+                      })
                     }
                     className="w-full"
                   />
@@ -754,9 +768,7 @@ export default function Leads() {
           </div>
         ) : assignedLeads.length === 0 ? (
           <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
-            <p className="text-slate-600">
-              No leads assigned to you yet.
-            </p>
+            <p className="text-slate-600">No leads assigned to you yet.</p>
           </div>
         ) : (
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
@@ -832,12 +844,16 @@ export default function Leads() {
                         </select>
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-600">
-                        <p className="text-xs truncate max-w-xs">{lead.note || "-"}</p>
+                        <p className="text-xs truncate max-w-xs">
+                          {lead.note || "-"}
+                        </p>
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-600">
                         {lead.nextReminderDate ? (
                           <span className="font-medium text-amber-600">
-                            {new Date(lead.nextReminderDate).toLocaleDateString()}
+                            {new Date(
+                              lead.nextReminderDate,
+                            ).toLocaleDateString()}
                           </span>
                         ) : (
                           "-"
