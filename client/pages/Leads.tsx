@@ -63,7 +63,9 @@ export default function Leads() {
     assignedTo: user?.role === "salesperson" ? user?.id : undefined,
   });
 
-  const assignedLeads = leads.filter((lead) => lead.assignedTo === user?.id);
+  const assignedLeads = user?.role === "admin"
+    ? leads
+    : leads.filter((lead) => lead.assignedTo === user?.id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
