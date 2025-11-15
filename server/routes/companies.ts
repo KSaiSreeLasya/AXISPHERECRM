@@ -26,21 +26,26 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
       "X-Api-Key": APOLLO_API_KEY,
     };
 
-    // Try to fetch from mixed_companies/search endpoint
+    // Try to fetch from mixed_companies/search endpoint with higher limit to get all saved companies
     const searchUrl = `${APOLLO_BASE_URL}/mixed_companies/search`;
-    
-    console.log(`[Companies] Calling ${searchUrl}`);
-    
+
+    console.log(`[Companies] Calling ${searchUrl} with limit=${limit}, page=${page}`);
+
+    // Try fetching with a large limit to get all saved companies at once
+    const effectiveLimit = Math.min(500, limit);
+
     const searchResponse = await fetch(searchUrl, {
       method: "POST",
       headers,
       body: JSON.stringify({
-        limit,
+        limit: effectiveLimit,
         page,
         person_details: [],
         organization_details: true,
         show_suggestions: false,
         reveal_personal_emails: false,
+        // Try to get only bookmarked/saved companies
+        bookmarked_only: true,
       }),
     });
 
