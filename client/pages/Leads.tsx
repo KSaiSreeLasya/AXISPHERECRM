@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Edit2, Plus, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess";
 
 const LEAD_STATUSES: LeadStatus[] = [
   "Not lifted",
@@ -39,6 +40,8 @@ export default function Leads() {
     useCRMStore();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { canEditLead, canDeleteLead, canAutoAssignLeads, canAssignLeads } =
+    useRoleBasedAccess();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,12 +124,30 @@ export default function Leads() {
   };
 
   const handleEditLead = (lead: Lead) => {
+    if (!canEditLead(lead)) {
+      toast({
+        title: "Error",
+        description: "You can only edit leads assigned to you",
+        variant: "destructive",
+      });
+      return;
+    }
     setFormData(lead);
     setEditingId(lead.id);
     setShowForm(true);
   };
 
   const handleDeleteLead = async (id: string) => {
+    const lead = leads.find((l) => l.id === id);
+    if (!lead || !canDeleteLead(lead)) {
+      toast({
+        title: "Error",
+        description: "You can only delete leads assigned to you",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this lead?")) {
       try {
         await deleteLead(id);
@@ -357,7 +378,7 @@ export default function Leads() {
             </p>
           </div>
           <div className="flex gap-2">
-            {leads.length > 0 && (
+            {leads.length > 0 && canAutoAssignLeads() && (
               <Button
                 onClick={handleAutoAssign}
                 className="bg-green-600 hover:bg-green-700 text-white"
@@ -865,6 +886,12 @@ export default function Leads() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleEditLead(lead)}
+                            disabled={!canEditLead(lead)}
+                            title={
+                              !canEditLead(lead)
+                                ? "You can only edit your assigned leads"
+                                : ""
+                            }
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
@@ -872,7 +899,13 @@ export default function Leads() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteLead(lead.id)}
-                            className="text-red-600 hover:bg-red-50"
+                            disabled={!canDeleteLead(lead)}
+                            className="text-red-600 hover:bg-red-50 disabled:text-slate-400"
+                            title={
+                              !canDeleteLead(lead)
+                                ? "You can only delete your assigned leads"
+                                : ""
+                            }
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
