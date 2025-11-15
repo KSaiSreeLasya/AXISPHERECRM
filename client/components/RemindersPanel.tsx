@@ -189,9 +189,7 @@ export function RemindersPanel() {
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className="text-sm font-semibold text-slate-900">
-                        {new Date(
-                          reminder.nextReminderDate!,
-                        ).toLocaleDateString()}
+                        {formatDateOnlyIST(reminder.nextReminderDate!)}
                       </p>
                       <p
                         className={`text-xs font-medium mt-1 ${
