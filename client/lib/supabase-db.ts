@@ -59,6 +59,8 @@ export async function getLeads(): Promise<Lead[]> {
       companyEmployees: item.company_employees,
       companyIndustries: item.company_industries || [],
       companyKeywords: item.company_keywords || [],
+      assignedTo: item.assigned_to,
+      status: item.status || "Not lifted",
       createdAt: item.created_at,
     }));
   } catch (err) {
