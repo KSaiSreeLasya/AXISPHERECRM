@@ -378,7 +378,7 @@ export default function Leads() {
             </p>
           </div>
           <div className="flex gap-2">
-            {leads.length > 0 && (
+            {leads.length > 0 && canAutoAssignLeads() && (
               <Button
                 onClick={handleAutoAssign}
                 className="bg-green-600 hover:bg-green-700 text-white"
