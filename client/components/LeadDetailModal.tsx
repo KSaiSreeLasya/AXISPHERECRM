@@ -130,7 +130,6 @@ export function LeadDetailModal({
     }
   };
 
-
   if (!isOpen) return null;
 
   return (

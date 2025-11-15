@@ -12,10 +12,11 @@ const IST_OFFSET = 5.5; // UTC+5:30
  */
 export function formatDateIST(
   dateString: string | Date,
-  format: "datetime" | "date" = "datetime"
+  format: "datetime" | "date" = "datetime",
 ): string {
   try {
-    const date = typeof dateString === "string" ? new Date(dateString) : dateString;
+    const date =
+      typeof dateString === "string" ? new Date(dateString) : dateString;
 
     if (isNaN(date.getTime())) {
       return typeof dateString === "string" ? dateString : "Invalid date";
@@ -73,7 +74,8 @@ export function formatDateOnlyIST(dateString: string | Date): string {
  */
 export function formatRelativeTime(dateString: string | Date): string {
   try {
-    const date = typeof dateString === "string" ? new Date(dateString) : dateString;
+    const date =
+      typeof dateString === "string" ? new Date(dateString) : dateString;
 
     if (isNaN(date.getTime())) {
       return "Invalid date";
@@ -87,8 +89,10 @@ export function formatRelativeTime(dateString: string | Date): string {
     const diffDays = Math.floor(diffHours / 24);
 
     if (diffSecs < 60) return "just now";
-    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    if (diffMins < 60)
+      return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
 
     return formatDateIST(dateString, "date");
