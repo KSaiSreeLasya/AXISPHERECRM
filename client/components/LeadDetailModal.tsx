@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Trash2, Plus, Loader2 } from "lucide-react";
 import { getLeadNotes, addLeadNote, deleteLeadNote } from "@/lib/supabase-db";
 import { useToast } from "@/hooks/use-toast";
+import { formatActivityLogDate } from "@/lib/formatDateIST";
 
 const LEAD_STATUSES: LeadStatus[] = [
   "Not lifted",
