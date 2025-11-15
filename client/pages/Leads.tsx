@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Edit2, Plus, X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess";
 
 const LEAD_STATUSES: LeadStatus[] = [
   "Not lifted",
