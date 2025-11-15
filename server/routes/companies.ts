@@ -21,92 +21,84 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
 
     console.log(`[Companies] Fetching saved companies with limit=${limit}, page=${page}`);
 
-    // Fetch bookmarks (saved companies) from Apollo.io
-    const bookmarksUrl = `${APOLLO_BASE_URL}/bookmarks`;
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+      "X-Api-Key": APOLLO_API_KEY,
+    };
+
+    // Try to fetch from mixed_companies/search endpoint
+    const searchUrl = `${APOLLO_BASE_URL}/mixed_companies/search`;
     
-    const fetchOptions: RequestInit = {
+    console.log(`[Companies] Calling ${searchUrl}`);
+    
+    const searchResponse = await fetch(searchUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Api-Key": APOLLO_API_KEY,
-      },
+      headers,
       body: JSON.stringify({
         limit,
         page,
-        type: "organization",
+        person_details: [],
+        organization_details: true,
+        show_suggestions: false,
+        reveal_personal_emails: false,
       }),
-    };
+    });
 
-    console.log(`[Companies] Calling ${bookmarksUrl}`);
-    
-    const bookmarksResponse = await fetch(bookmarksUrl, fetchOptions);
-    const responseText = await bookmarksResponse.text();
+    const responseText = await searchResponse.text();
+    console.log(`[Companies] Response status: ${searchResponse.status}`);
 
-    console.log(`[Companies] Response status: ${bookmarksResponse.status}`);
-
-    if (!bookmarksResponse.ok) {
-      console.log(`[Companies] Response body: ${responseText.substring(0, 200)}`);
+    if (!searchResponse.ok) {
+      console.error(`[Companies] Search API error: ${searchResponse.status}`);
+      console.error(`[Companies] Error response: ${responseText.substring(0, 300)}`);
       
-      // If 404 or no saved companies, return empty list
-      if (bookmarksResponse.status === 404) {
-        console.log("[Companies] No saved companies found (404)");
-        return res.json({
-          companies: [],
-          total: 0,
-          page,
-          limit,
-          hasMore: false,
-        });
-      }
-      
-      return res.status(bookmarksResponse.status).json({
-        error: "Failed to fetch saved companies from Apollo",
-        status: bookmarksResponse.status,
+      return res.status(searchResponse.status).json({
+        error: "Failed to fetch companies from Apollo",
+        status: searchResponse.status,
       });
     }
 
-    let bookmarksData;
+    let searchData;
     try {
-      bookmarksData = JSON.parse(responseText);
+      searchData = JSON.parse(responseText);
     } catch (e) {
-      console.error("[Companies] Failed to parse response:", responseText);
+      console.error("[Companies] Failed to parse response:", responseText.substring(0, 300));
       return res.status(500).json({
         error: "Invalid response from Apollo API",
       });
     }
 
-    const bookmarks = bookmarksData.bookmarks || [];
-    console.log(`[Companies] Fetched ${bookmarks.length} bookmarks`);
+    const organizations = searchData.organizations || [];
+    console.log(`[Companies] Fetched ${organizations.length} companies`);
 
-    // Map bookmarks to company format
-    const companies = bookmarks
-      .filter((b: any) => b && b.organization_id)
-      .map((bookmark: any) => ({
-        id: bookmark.organization_id,
-        name: bookmark.organization_name || bookmark.name || "",
-        domain: bookmark.domain || "",
-        industry: bookmark.industry || "",
-        employeeCount: bookmark.employee_count,
-        employeeCountRange: bookmark.employee_count_range || "",
-        revenue: bookmark.revenue,
-        revenueRange: bookmark.revenue_range || "",
-        logoUrl: bookmark.logo_url || "",
-        linkedinUrl: bookmark.linkedin_url || "",
-        crunchbaseUrl: bookmark.crunchbase_url || "",
-        foundedYear: bookmark.founded_year,
-        hqAddress: bookmark.hq_address || "",
-        countries: bookmark.countries || [],
-        website: bookmark.website || "",
-        phone: bookmark.phone || "",
-        apolloProfileUrl: bookmark.apollo_url || "",
+    // Map organizations to company format
+    const companies = organizations
+      .filter((org: any) => org && org.id)
+      .map((org: any) => ({
+        id: org.id,
+        name: org.name || "",
+        domain: org.domain || "",
+        industry: org.industry || "",
+        employeeCount: org.employee_count,
+        employeeCountRange: org.employee_count_range || "",
+        revenue: org.revenue,
+        revenueRange: org.revenue_range || "",
+        logoUrl: org.logo_url || "",
+        linkedinUrl: org.linkedin_url || "",
+        crunchbaseUrl: org.crunchbase_url || "",
+        foundedYear: org.founded_year,
+        hqAddress: org.hq_address || "",
+        countries: org.countries || [],
+        website: org.website || "",
+        phone: org.phone || "",
+        apolloProfileUrl: org.apollo_url || "",
       }));
 
     res.json({
       companies,
-      total: bookmarksData.pagination?.total_entries || companies.length,
+      total: searchData.pagination?.total_entries || companies.length,
       page,
       limit,
-      hasMore: bookmarksData.pagination?.total_pages ? page < bookmarksData.pagination.total_pages : false,
+      hasMore: searchData.pagination?.total_pages ? page < searchData.pagination.total_pages : false,
     });
   } catch (error) {
     console.error("[Companies] Unexpected error:", error);
