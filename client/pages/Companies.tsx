@@ -204,6 +204,57 @@ export default function Companies() {
     }
   };
 
+  const handleSyncSavedCompanies = async () => {
+    setIsSyncing(true);
+    try {
+      // Get all companies from search results to add to saved
+      if (searchResults.length === 0) {
+        toast({
+          title: "Info",
+          description: "Please search for companies first or provide company IDs to sync",
+        });
+        setIsSyncing(false);
+        return;
+      }
+
+      const response = await fetch("/api/sync-companies", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          companies: searchResults.map((c) => ({
+            id: c.id,
+            apolloId: c.id,
+            name: c.name,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Sync failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      toast({
+        title: "Success",
+        description: `Synced ${data.synced} companies to your saved list`,
+      });
+
+      // Reload saved companies
+      await loadSavedCompanies();
+    } catch (error) {
+      console.error("Error syncing companies:", error);
+      toast({
+        title: "Error",
+        description: "Failed to sync companies",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
