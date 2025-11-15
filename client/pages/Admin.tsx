@@ -429,7 +429,7 @@ export default function Admin() {
                         {salesperson.phoneNumber || "-"}
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-600">
-                        {new Date(salesperson.createdAt).toLocaleDateString()}
+                        {formatDateOnlyIST(salesperson.createdAt)}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <div className="flex gap-2">
