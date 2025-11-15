@@ -332,37 +332,56 @@ export function LeadDetailModal({
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                 </div>
-              ) : notes.length === 0 ? (
-                <p className="text-slate-500 text-center py-8">
-                  No activity logs yet. Add your first note!
-                </p>
               ) : (
-                notes.map((note) => (
-                  <div
-                    key={note.id}
-                    className="border border-slate-200 rounded-lg p-4 space-y-2"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="text-slate-900">{note.description}</p>
-                        {note.status && (
-                          <p className="text-sm text-blue-600 font-medium mt-1">
-                            ✓ {note.status}
+                <>
+                  {lead.note && (
+                    <div className="border border-blue-200 rounded-lg p-4 space-y-2 bg-blue-50">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-blue-700 mb-1">
+                            Main Note
                           </p>
-                        )}
+                          <p className="text-slate-900">{lead.note}</p>
+                        </div>
                       </div>
-                      <button
-                        onClick={() => handleDeleteNote(note.id)}
-                        className="text-slate-400 hover:text-red-600 ml-2"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      <p className="text-xs text-slate-500">
+                        Created: {formatActivityLogDate(lead.createdAt)}
+                      </p>
                     </div>
-                    <p className="text-xs text-slate-500">
-                      {formatDate(note.createdAt)}
+                  )}
+                  {notes.length === 0 && !lead.note ? (
+                    <p className="text-slate-500 text-center py-8">
+                      No activity logs yet. Add your first note!
                     </p>
-                  </div>
-                ))
+                  ) : (
+                    notes.map((note) => (
+                      <div
+                        key={note.id}
+                        className="border border-slate-200 rounded-lg p-4 space-y-2"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="text-slate-900">{note.description}</p>
+                            {note.status && (
+                              <p className="text-sm text-blue-600 font-medium mt-1">
+                                ✓ {note.status}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => handleDeleteNote(note.id)}
+                            className="text-slate-400 hover:text-red-600 ml-2"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500">
+                          {formatActivityLogDate(note.createdAt)}
+                        </p>
+                      </div>
+                    ))
+                  )}
+                </>
               )}
             </div>
           </TabsContent>
