@@ -1,14 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Lead } from "./useCRMStore";
 
-export type UserRole = "salesperson" | "manager" | "admin";
+export type UserRole = "salesperson" | "admin";
 
 export function useRoleBasedAccess() {
   const { user } = useAuth();
 
-  // For now, we'll assume all authenticated users are salespersons
-  // This can be extended to support different roles from the database
-  const userRole: string = "salesperson";
+  // Get the actual user role from auth context
+  const userRole: UserRole = user?.role || "salesperson";
 
   const canViewLead = (lead: Lead): boolean => {
     if (!user) return false;
