@@ -3,7 +3,7 @@ import { MainLayout } from "@/components/Layout";
 import { Salesperson, useCRMStore } from "@/hooks/useCRMStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Edit2, Plus, Loader2 } from "lucide-react";
+import { Trash2, Edit2, Plus, Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Salespersons() {
