@@ -7,10 +7,14 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
     const APOLLO_API_KEY = process.env.VITE_APOLLO_API_KEY;
     if (!APOLLO_API_KEY) {
       console.error("Missing VITE_APOLLO_API_KEY environment variable");
+      console.error("Available env vars:", Object.keys(process.env).filter(k => k.includes('APOLLO')));
       return res.status(500).json({
         error: "Apollo API key not configured",
+        availableVars: Object.keys(process.env).filter(k => k.includes('APOLLO')),
       });
     }
+
+    console.log(`[Companies API] Using API key: ${APOLLO_API_KEY.substring(0, 10)}...`);
 
     // Get pagination parameters from query string
     const limit = Math.min(Math.max(parseInt(req.query.limit as string) || 100, 1), 500);
@@ -24,7 +28,10 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
     };
 
     // First, fetch bookmarks (saved companies)
-    const bookmarksResponse = await fetch(`${APOLLO_BASE_URL}/bookmarks`, {
+    const bookmarksUrl = `${APOLLO_BASE_URL}/bookmarks`;
+    console.log(`[Companies API] Calling ${bookmarksUrl}`);
+
+    const bookmarksResponse = await fetch(bookmarksUrl, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -34,16 +41,29 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
       }),
     });
 
+    console.log(`[Companies API] Response status: ${bookmarksResponse.status}`);
+    const errorText = await bookmarksResponse.text();
+
     if (!bookmarksResponse.ok) {
-      const errorText = await bookmarksResponse.text();
       console.error(`[Companies API] Bookmarks API error: ${bookmarksResponse.status} - ${errorText}`);
       return res.status(bookmarksResponse.status).json({
         error: "Failed to fetch saved companies from Apollo",
+        status: bookmarksResponse.status,
         details: errorText,
       });
     }
 
-    const bookmarksData = await bookmarksResponse.json();
+    let bookmarksData;
+    try {
+      bookmarksData = JSON.parse(errorText);
+    } catch (e) {
+      console.error("[Companies API] Failed to parse response:", errorText);
+      return res.status(500).json({
+        error: "Invalid response from Apollo API",
+        details: errorText,
+      });
+    }
+
     const bookmarks = bookmarksData.bookmarks || [];
 
     console.log(`[Companies API] Fetched ${bookmarks.length} bookmarks`);
