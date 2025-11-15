@@ -34,6 +34,9 @@ export function createServer() {
   app.post("/api/auth/sign-out", handleAuthSignOut);
   app.get("/api/auth/session", handleAuthSession);
 
+  // Companies API
+  app.get("/api/companies", handleGetCompanies);
+
   // Apollo proxy
   app.post("/api/apollo", handleApolloProxy);
 
