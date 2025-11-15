@@ -70,20 +70,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Auth sign in error:", error);
+        throw error;
+      }
 
-      const { data: userData } = await supabase
-        .from("salespersons")
-        .select("id, name, email")
-        .eq("auth_id", data.user.id)
-        .single();
+      if (!data.user) {
+        throw new Error("No user returned from login");
+      }
 
-      if (userData) {
-        setUser({
-          id: userData.id,
-          email: userData.email,
-          name: userData.name,
-        });
+      try {
+        const { data: userData, error: dbError } = await supabase
+          .from("salespersons")
+          .select("id, name, email")
+          .eq("auth_id", data.user.id)
+          .single();
+
+        if (dbError) {
+          console.error("Error fetching salesperson record after login:", dbError);
+          throw new Error("Could not fetch user profile: " + dbError.message);
+        }
+
+        if (userData) {
+          setUser({
+            id: userData.id,
+            email: userData.email,
+            name: userData.name,
+          });
+        } else {
+          throw new Error("No user profile found. Please contact support.");
+        }
+      } catch (dbError) {
+        console.error("Database error during login:", dbError);
+        throw dbError;
       }
     } catch (error) {
       console.error("Login error:", error);
