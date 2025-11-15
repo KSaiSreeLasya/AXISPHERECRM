@@ -111,6 +111,11 @@ export default function Index() {
           })}
         </div>
 
+        {/* Reminders Section */}
+        <div className="bg-white rounded-lg border border-slate-200 p-6">
+          <RemindersPanel />
+        </div>
+
         {/* Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Leads */}
