@@ -752,6 +752,12 @@ export default function Leads() {
               No leads yet. Add one to get started!
             </p>
           </div>
+        ) : assignedLeads.length === 0 ? (
+          <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
+            <p className="text-slate-600">
+              No leads assigned to you yet.
+            </p>
+          </div>
         ) : (
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -777,15 +783,12 @@ export default function Leads() {
                       Next Reminder
                     </th>
                     <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
-                      Assigned To
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {leads.map((lead, idx) => (
+                  {assignedLeads.map((lead, idx) => (
                     <tr
                       key={lead.id}
                       className={idx % 2 === 0 ? "bg-white" : "bg-slate-50"}
