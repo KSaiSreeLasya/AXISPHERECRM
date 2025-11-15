@@ -86,6 +86,8 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
           company_employees: lead.companyEmployees,
           company_industries: lead.companyIndustries.filter((i) => i),
           company_keywords: lead.companyKeywords.filter((k) => k),
+          assigned_to: lead.assignedTo,
+          status: lead.status || "Not lifted",
         },
       ])
       .select()
@@ -114,6 +116,8 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
       companyEmployees: data.company_employees,
       companyIndustries: data.company_industries,
       companyKeywords: data.company_keywords,
+      assignedTo: data.assigned_to,
+      status: data.status || "Not lifted",
       createdAt: data.created_at,
     };
   } catch (err) {
