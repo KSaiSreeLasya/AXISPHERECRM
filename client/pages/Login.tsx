@@ -99,9 +99,6 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg text-center">
-            
-          </div>
         </div>
       </div>
     </div>
