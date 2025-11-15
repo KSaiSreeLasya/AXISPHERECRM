@@ -23,6 +23,15 @@ export interface Company {
   createdAt: string;
 }
 
+export interface SavedCompany {
+  id: string;
+  apolloId: string;
+  companyName: string;
+  savedAt: string;
+  syncStatus: string;
+  createdAt: string;
+}
+
 // LEADS OPERATIONS
 export async function getLeads(): Promise<Lead[]> {
   try {
