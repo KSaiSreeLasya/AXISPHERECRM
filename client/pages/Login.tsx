@@ -100,14 +100,7 @@ export default function Login() {
           </form>
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg text-center">
-            <p className="text-xs text-blue-700 font-semibold mb-2">
-              Admin Login
-            </p>
-            <p className="text-xs text-slate-600">
-              Email: admin@axisphere.in
-              <br />
-              Password: admin2024
-            </p>
+            
           </div>
         </div>
       </div>
