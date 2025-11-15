@@ -1,4 +1,4 @@
-import { RequestHandler } from "express";
+import { RequestHandler, Response } from "express";
 
 const APOLLO_BASE_URL = "https://api.apollo.io/v1";
 
@@ -7,51 +7,55 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
     const APOLLO_API_KEY = process.env.VITE_APOLLO_API_KEY;
     
     if (!APOLLO_API_KEY) {
-      console.error("Missing VITE_APOLLO_API_KEY environment variable");
+      console.error("[Companies] Missing VITE_APOLLO_API_KEY environment variable");
       return res.status(500).json({
         error: "Apollo API key not configured",
       });
     }
 
+    console.log("[Companies] API key is set");
+
     // Get pagination parameters from query string
     const limit = Math.min(Math.max(parseInt(req.query.limit as string) || 100, 1), 500);
     const page = Math.max(parseInt(req.query.page as string) || 1, 1);
 
-    console.log(`[Companies API] Fetching saved companies with limit=${limit}, page=${page}`);
-
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${APOLLO_API_KEY}`,
-    };
+    console.log(`[Companies] Fetching saved companies with limit=${limit}, page=${page}`);
 
     // Fetch bookmarks (saved companies) from Apollo.io
     const bookmarksUrl = `${APOLLO_BASE_URL}/bookmarks`;
-    console.log(`[Companies API] Calling ${bookmarksUrl}`);
     
-    const bookmarksResponse = await fetch(bookmarksUrl, {
+    const fetchOptions: RequestInit = {
       method: "POST",
-      headers,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${APOLLO_API_KEY}`,
+      },
       body: JSON.stringify({
         limit,
         page,
         type: "organization",
       }),
-    });
+    };
+
+    console.log(`[Companies] Calling ${bookmarksUrl}`);
+    
+    const bookmarksResponse = await fetch(bookmarksUrl, fetchOptions);
+    const responseText = await bookmarksResponse.text();
+
+    console.log(`[Companies] Response status: ${bookmarksResponse.status}`);
 
     if (!bookmarksResponse.ok) {
-      const errorText = await bookmarksResponse.text();
-      console.error(`[Companies API] Apollo bookmarks error: ${bookmarksResponse.status}`);
-      console.error(`[Companies API] Error response: ${errorText}`);
+      console.log(`[Companies] Response body: ${responseText.substring(0, 200)}`);
       
-      // Return empty list with helpful error message
+      // If 404 or no saved companies, return empty list
       if (bookmarksResponse.status === 404) {
+        console.log("[Companies] No saved companies found (404)");
         return res.json({
           companies: [],
           total: 0,
           page,
           limit,
           hasMore: false,
-          error: "No saved companies found or API endpoint not available",
         });
       }
       
@@ -61,20 +65,18 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
       });
     }
 
-    const responseText = await bookmarksResponse.text();
     let bookmarksData;
-    
     try {
       bookmarksData = JSON.parse(responseText);
     } catch (e) {
-      console.error("[Companies API] Failed to parse response:", responseText);
+      console.error("[Companies] Failed to parse response:", responseText);
       return res.status(500).json({
         error: "Invalid response from Apollo API",
       });
     }
 
     const bookmarks = bookmarksData.bookmarks || [];
-    console.log(`[Companies API] Fetched ${bookmarks.length} bookmarks`);
+    console.log(`[Companies] Fetched ${bookmarks.length} bookmarks`);
 
     // Map bookmarks to company format
     const companies = bookmarks
@@ -107,7 +109,7 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
       hasMore: bookmarksData.pagination?.total_pages ? page < bookmarksData.pagination.total_pages : false,
     });
   } catch (error) {
-    console.error("[Companies API] Unexpected error:", error);
+    console.error("[Companies] Unexpected error:", error);
     res.status(500).json({
       error: "Failed to fetch companies",
       message: error instanceof Error ? error.message : "Unknown error",
