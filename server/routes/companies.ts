@@ -1,21 +1,20 @@
-import { RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
+import { createClient } from "@supabase/supabase-js";
 
-const APOLLO_BASE_URL = "https://api.apollo.io/v1";
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error(
+    "[Companies] Missing Supabase credentials in environment variables",
+  );
+}
+
+const supabase = createClient(supabaseUrl || "", supabaseKey || "");
 
 export const handleGetCompanies: RequestHandler = async (req, res) => {
   try {
-    const APOLLO_API_KEY = process.env.VITE_APOLLO_API_KEY;
-
-    if (!APOLLO_API_KEY) {
-      console.error(
-        "[Companies] Missing VITE_APOLLO_API_KEY environment variable",
-      );
-      return res.status(500).json({
-        error: "Apollo API key not configured",
-      });
-    }
-
-    console.log("[Companies] API key is set");
+    console.log("[Companies] Fetching saved companies from Supabase");
 
     // Get pagination parameters from query string
     const limit = Math.min(
@@ -23,98 +22,59 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
       500,
     );
     const page = Math.max(parseInt(req.query.page as string) || 1, 1);
+    const offset = (page - 1) * limit;
 
     console.log(
-      `[Companies] Fetching saved companies with limit=${limit}, page=${page}`,
+      `[Companies] Fetching with limit=${limit}, page=${page}, offset=${offset}`,
     );
 
-    const headers: HeadersInit = {
-      "Content-Type": "application/json",
-      "X-Api-Key": APOLLO_API_KEY,
-    };
+    // Fetch from Supabase saved_companies table
+    const { data, error, count } = await supabase
+      .from("saved_companies")
+      .select("*", { count: "exact" })
+      .order("saved_at", { ascending: false })
+      .range(offset, offset + limit - 1);
 
-    // Fetch from /bookmarks endpoint to get saved/bookmarked companies
-    const bookmarksUrl = `${APOLLO_BASE_URL}/bookmarks`;
-
-    console.log(
-      `[Companies] Calling ${bookmarksUrl} with limit=${limit}, page=${page}`,
-    );
-
-    const effectiveLimit = Math.min(500, limit);
-
-    const bookmarksResponse = await fetch(bookmarksUrl, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        limit: effectiveLimit,
-        page,
-        type: "organization",
-      }),
-    });
-
-    const responseText = await bookmarksResponse.text();
-    console.log(`[Companies] Response status: ${bookmarksResponse.status}`);
-
-    if (!bookmarksResponse.ok) {
-      console.error(`[Companies] Bookmarks API error: ${bookmarksResponse.status}`);
-      console.error(
-        `[Companies] Error response: ${responseText.substring(0, 300)}`,
-      );
-
-      return res.status(bookmarksResponse.status).json({
-        error: "Failed to fetch saved companies from Apollo",
-        status: bookmarksResponse.status,
-      });
-    }
-
-    let bookmarksData;
-    try {
-      bookmarksData = JSON.parse(responseText);
-    } catch (e) {
-      console.error(
-        "[Companies] Failed to parse response:",
-        responseText.substring(0, 300),
-      );
+    if (error) {
+      console.error("[Companies] Supabase error:", error);
       return res.status(500).json({
-        error: "Invalid response from Apollo API",
+        error: "Failed to fetch saved companies from Supabase",
+        details: error.message,
       });
     }
 
-    // Extract organizations from bookmarks response
-    const organizations = bookmarksData.bookmarks || bookmarksData.organizations || [];
-    console.log(`[Companies] Fetched ${organizations.length} saved companies`);
+    const companies = (data || []).map((item: any) => ({
+      id: item.id,
+      apolloId: item.apollo_id,
+      name: item.company_name,
+      domain: "",
+      industry: "",
+      employeeCount: undefined,
+      employeeCountRange: "",
+      revenue: undefined,
+      revenueRange: "",
+      logoUrl: "",
+      linkedinUrl: "",
+      crunchbaseUrl: "",
+      foundedYear: undefined,
+      hqAddress: "",
+      countries: [],
+      website: "",
+      phone: "",
+      apolloProfileUrl: "",
+    }));
 
-    // Map organizations to company format
-    const companies = organizations
-      .filter((org: any) => org && org.id)
-      .map((org: any) => ({
-        id: org.id,
-        name: org.name || "",
-        domain: org.domain || "",
-        industry: org.industry || "",
-        employeeCount: org.employee_count,
-        employeeCountRange: org.employee_count_range || "",
-        revenue: org.revenue,
-        revenueRange: org.revenue_range || "",
-        logoUrl: org.logo_url || "",
-        linkedinUrl: org.linkedin_url || "",
-        crunchbaseUrl: org.crunchbase_url || "",
-        foundedYear: org.founded_year,
-        hqAddress: org.hq_address || "",
-        countries: org.countries || [],
-        website: org.website || "",
-        phone: org.phone || "",
-        apolloProfileUrl: org.apollo_url || "",
-      }));
+    console.log(`[Companies] Fetched ${companies.length} saved companies`);
+
+    const total = count || 0;
+    const hasMore = offset + limit < total;
 
     res.json({
       companies,
-      total: bookmarksData.pagination?.total_entries || companies.length,
+      total,
       page,
       limit,
-      hasMore: bookmarksData.pagination?.total_pages
-        ? page < bookmarksData.pagination.total_pages
-        : false,
+      hasMore,
     });
   } catch (error) {
     console.error("[Companies] Unexpected error:", error);
