@@ -258,11 +258,21 @@ export default function Companies() {
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold text-slate-900">Companies</h2>
-          <p className="text-slate-600 mt-1">
-            Manage and search companies from Apollo.io
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900">Companies</h2>
+            <p className="text-slate-600 mt-1">
+              Manage and search companies from Apollo.io
+            </p>
+          </div>
+          <Button
+            onClick={handleSyncSavedCompanies}
+            disabled={isSyncing || searchResults.length === 0}
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+          >
+            {isSyncing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {isSyncing ? "Syncing..." : "Sync Saved Companies"}
+          </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
