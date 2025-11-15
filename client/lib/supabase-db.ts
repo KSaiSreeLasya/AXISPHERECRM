@@ -240,13 +240,14 @@ export async function addSalesperson(
       .single();
 
     if (error) {
+      const errorMsg = error.message || error.code || "Unknown error";
       console.error(
         "Error adding salesperson - Code:",
         error.code,
         "Message:",
-        error.message,
+        errorMsg,
       );
-      throw new Error(`Failed to add salesperson: ${error.message}`);
+      throw new Error(`Failed to add salesperson: ${errorMsg}`);
     }
 
     return {
