@@ -48,35 +48,10 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
 
     console.log(`[Companies API] Fetched ${bookmarks.length} bookmarks`);
 
-    // Fetch details for each bookmarked organization
-    const companiesDetails = await Promise.all(
-      bookmarks.map(async (bookmark: any) => {
-        const orgId = bookmark.organization_id || bookmark.id;
-        if (!orgId) return null;
-
-        try {
-          const orgResponse = await fetch(`${APOLLO_BASE_URL}/organizations/${orgId}`, {
-            method: "GET",
-            headers,
-          });
-
-          if (!orgResponse.ok) {
-            console.warn(`[Companies API] Failed to fetch details for org ${orgId}`);
-            // Return basic info from bookmark if details fetch fails
-            return mapBookmarkToCompany(bookmark);
-          }
-
-          const orgData = await orgResponse.json();
-          return mapOrganizationToCompany(orgData.organization || orgData);
-        } catch (error) {
-          console.warn(`[Companies API] Error fetching details for org ${orgId}:`, error);
-          return mapBookmarkToCompany(bookmark);
-        }
-      })
-    );
-
-    // Filter out null entries and return
-    const companies = companiesDetails.filter((c): c is any => c !== null);
+    // Map bookmarks to company format
+    const companies = bookmarks
+      .map((bookmark: any) => mapBookmarkToCompany(bookmark))
+      .filter((c): c is any => c !== null);
 
     res.json({
       companies,
