@@ -31,6 +31,7 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
 
 export default function Leads() {
   const { leads, salespersons, addLead, deleteLead, updateLead, isLoading } = useCRMStore();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -48,7 +49,12 @@ export default function Leads() {
     companyIndustries: [""],
     companyKeywords: [""],
     status: "Not lifted",
+    note: "",
+    nextReminderDate: "",
+    assignedTo: user?.id,
   });
+
+  const assignedLeads = leads.filter((lead) => lead.assignedTo === user?.id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
