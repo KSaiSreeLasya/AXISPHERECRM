@@ -12,7 +12,7 @@ import Leads from "./pages/Leads";
 import Salespersons from "./pages/Salespersons";
 import Companies from "./pages/Companies";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -47,7 +47,14 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/"
               element={

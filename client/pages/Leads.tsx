@@ -60,10 +60,13 @@ export default function Leads() {
     status: "Not lifted",
     note: "",
     nextReminderDate: "",
-    assignedTo: user?.id,
+    assignedTo: user?.role === "salesperson" ? user?.id : undefined,
   });
 
-  const assignedLeads = leads.filter((lead) => lead.assignedTo === user?.id);
+  const assignedLeads =
+    user?.role === "admin"
+      ? leads
+      : leads.filter((lead) => lead.assignedTo === user?.id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +111,7 @@ export default function Leads() {
         status: "Not lifted",
         note: "",
         nextReminderDate: "",
-        assignedTo: user?.id,
+        assignedTo: user?.role === "salesperson" ? user?.id : undefined,
       });
       setShowForm(false);
     } catch (error) {
@@ -286,7 +289,7 @@ export default function Leads() {
       status: "Not lifted",
       note: "",
       nextReminderDate: "",
-      assignedTo: user?.id,
+      assignedTo: user?.role === "salesperson" ? user?.id : undefined,
     });
   };
 

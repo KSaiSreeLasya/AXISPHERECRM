@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
+export type UserRole = "salesperson" | "admin";
+
 export interface AuthUser {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
 }
 
 interface AuthContextType {
@@ -33,27 +36,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } = await supabase.auth.getSession();
 
       if (session?.user) {
-        try {
-          const { data, error } = await supabase
-            .from("salespersons")
-            .select("id, name, email")
-            .eq("auth_id", session.user.id)
-            .single();
+        // Check if it's an admin
+        const isAdmin = session.user.email === "admin@axisphere.in";
 
-          if (error) {
-            console.error("Error fetching salesperson record:", error);
-            return;
-          }
+        if (isAdmin) {
+          setUser({
+            id: "admin",
+            email: session.user.email || "admin@axisphere.in",
+            name: "Admin",
+            role: "admin",
+          });
+        } else {
+          // It's a salesperson
+          try {
+            const { data, error } = await supabase
+              .from("salespersons")
+              .select("id, name, email")
+              .eq("auth_id", session.user.id)
+              .single();
 
-          if (data) {
-            setUser({
-              id: data.id,
-              email: data.email,
-              name: data.name,
-            });
+            if (error) {
+              console.error("Error fetching salesperson record:", error);
+              return;
+            }
+
+            if (data) {
+              setUser({
+                id: data.id,
+                email: data.email,
+                name: data.name,
+                role: "salesperson",
+              });
+            }
+          } catch (dbError) {
+            console.error("Database error during auth check:", dbError);
           }
-        } catch (dbError) {
-          console.error("Database error during auth check:", dbError);
         }
       }
     } catch (error) {
@@ -65,17 +82,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error("Auth sign in error:", error);
-        throw error;
+      // Check if it's admin credentials
+      if (email === "admin@axisphere.in" && password === "admin2024") {
+        // For admin, we just set the user without Supabase auth
+        setUser({
+          id: "admin",
+          email: "admin@axisphere.in",
+          name: "Admin",
+          role: "admin",
+        });
+        return;
       }
 
-      if (!data.user) {
+      // For salesperson, use Supabase auth
+      let data;
+      let error;
+      try {
+        const result = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        data = result.data;
+        error = result.error;
+      } catch (err) {
+        console.error("Auth sign in exception:", err);
+        throw new Error("Authentication service error. Please try again.");
+      }
+
+      if (error) {
+        const errorMessage =
+          error.message || error.code || "Invalid email or password";
+        console.error("Auth sign in error:", error);
+        throw new Error(errorMessage);
+      }
+
+      if (!data?.user) {
         throw new Error("No user returned from login");
       }
 
@@ -99,6 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: userData.id,
             email: userData.email,
             name: userData.name,
+            role: "salesperson",
           });
         } else {
           throw new Error("No user profile found. Please contact support.");
@@ -157,6 +199,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             id: userData.id,
             email: userData.email,
             name: userData.name,
+            role: "salesperson",
           });
         } else {
           throw new Error("Failed to retrieve created profile");

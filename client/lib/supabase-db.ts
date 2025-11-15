@@ -107,10 +107,9 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
       .single();
 
     if (error) {
+      const errorMsg = error.message || error.code || "Unknown error";
       console.error("Error adding lead:", error);
-      throw new Error(
-        `Failed to add lead: ${error.message || "Unknown error"}`,
-      );
+      throw new Error(`Failed to add lead: ${errorMsg}`);
     }
 
     if (!data) {
@@ -240,13 +239,14 @@ export async function addSalesperson(
       .single();
 
     if (error) {
+      const errorMsg = error.message || error.code || "Unknown error";
       console.error(
         "Error adding salesperson - Code:",
         error.code,
         "Message:",
-        error.message,
+        errorMsg,
       );
-      throw new Error(`Failed to add salesperson: ${error.message}`);
+      throw new Error(`Failed to add salesperson: ${errorMsg}`);
     }
 
     return {
@@ -388,8 +388,9 @@ export async function addCompany(
       .single();
 
     if (error) {
+      const errorMsg = error.message || error.code || "Unknown error";
       console.error("Error adding company:", error);
-      throw new Error(`Failed to add company: ${error.message}`);
+      throw new Error(`Failed to add company: ${errorMsg}`);
     }
 
     return mapCompanyData(data);

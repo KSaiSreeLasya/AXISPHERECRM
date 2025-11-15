@@ -1,14 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { Lead } from "./useCRMStore";
 
-export type UserRole = "salesperson" | "manager" | "admin";
+export type UserRole = "salesperson" | "admin";
 
 export function useRoleBasedAccess() {
   const { user } = useAuth();
 
-  // For now, we'll assume all authenticated users are salespersons
-  // This can be extended to support different roles from the database
-  const userRole: string = "salesperson";
+  // Get the actual user role from auth context
+  const userRole: UserRole = user?.role || "salesperson";
 
   const canViewLead = (lead: Lead): boolean => {
     if (!user) return false;
@@ -21,7 +20,7 @@ export function useRoleBasedAccess() {
   const canEditLead = (lead: Lead): boolean => {
     if (!user) return false;
 
-    if (userRole === "admin" || userRole === "manager") {
+    if (userRole === "admin") {
       return true;
     }
 
@@ -32,7 +31,7 @@ export function useRoleBasedAccess() {
   const canDeleteLead = (lead: Lead): boolean => {
     if (!user) return false;
 
-    if (userRole === "admin" || userRole === "manager") {
+    if (userRole === "admin") {
       return true;
     }
 
@@ -41,17 +40,17 @@ export function useRoleBasedAccess() {
   };
 
   const canAssignLeads = (): boolean => {
-    // Only managers and admins can assign leads
-    return userRole === "manager" || userRole === "admin";
+    // Only admins can assign leads
+    return userRole === "admin";
   };
 
   const canAutoAssignLeads = (): boolean => {
-    // Only managers and admins can auto-assign
-    return userRole === "manager" || userRole === "admin";
+    // Only admins can auto-assign
+    return userRole === "admin";
   };
 
   const getViewableLeads = (leads: Lead[]): Lead[] => {
-    if (userRole === "admin" || userRole === "manager") {
+    if (userRole === "admin") {
       return leads;
     }
 
@@ -60,7 +59,7 @@ export function useRoleBasedAccess() {
   };
 
   const getManageableLeads = (leads: Lead[]): Lead[] => {
-    if (userRole === "admin" || userRole === "manager") {
+    if (userRole === "admin") {
       return leads;
     }
 
