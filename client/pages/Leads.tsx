@@ -40,6 +40,8 @@ export default function Leads() {
     useCRMStore();
   const { user } = useAuth();
   const { toast } = useToast();
+  const { canEditLead, canDeleteLead, canAutoAssignLeads, canAssignLeads } =
+    useRoleBasedAccess();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
