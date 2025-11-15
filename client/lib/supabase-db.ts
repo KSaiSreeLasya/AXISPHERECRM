@@ -446,3 +446,127 @@ function mapCompanyData(data: any): Company {
     createdAt: data.created_at,
   };
 }
+
+// SAVED COMPANIES OPERATIONS
+export async function getSavedCompanies(): Promise<SavedCompany[]> {
+  try {
+    const { data, error } = await supabase
+      .from("saved_companies")
+      .select("*")
+      .order("saved_at", { ascending: false });
+
+    if (error) {
+      console.error(
+        "Error fetching saved companies - Code:",
+        error.code,
+        "Message:",
+        error.message,
+      );
+      return [];
+    }
+
+    if (!data) return [];
+
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      apolloId: item.apollo_id,
+      companyName: item.company_name,
+      savedAt: item.saved_at,
+      syncStatus: item.sync_status,
+      createdAt: item.created_at,
+    }));
+  } catch (err) {
+    console.error("Exception fetching saved companies:", err);
+    return [];
+  }
+}
+
+export async function addSavedCompany(
+  apolloId: string,
+  companyName: string,
+): Promise<SavedCompany> {
+  try {
+    // Check if already exists
+    const { data: existing } = await supabase
+      .from("saved_companies")
+      .select("id")
+      .eq("apollo_id", apolloId)
+      .single();
+
+    if (existing) {
+      const { data } = await supabase
+        .from("saved_companies")
+        .select("*")
+        .eq("apollo_id", apolloId)
+        .single();
+      return mapSavedCompanyData(data);
+    }
+
+    // Add new saved company
+    const { data, error } = await supabase
+      .from("saved_companies")
+      .insert([
+        {
+          apollo_id: apolloId,
+          company_name: companyName,
+          sync_status: "synced",
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      const errorMsg = error.message || error.code || "Unknown error";
+      console.error("Error adding saved company:", error);
+      throw new Error(`Failed to add saved company: ${errorMsg}`);
+    }
+
+    return mapSavedCompanyData(data);
+  } catch (err) {
+    console.error("Exception adding saved company:", err);
+    throw err;
+  }
+}
+
+export async function deleteSavedCompany(apolloId: string) {
+  try {
+    const { error } = await supabase
+      .from("saved_companies")
+      .delete()
+      .eq("apollo_id", apolloId);
+
+    if (error) {
+      console.error("Error deleting saved company:", error);
+      throw error;
+    }
+  } catch (err) {
+    console.error("Exception deleting saved company:", err);
+    throw err;
+  }
+}
+
+export async function syncSavedCompanies(
+  companies: Array<{ apolloId: string; companyName: string }>,
+) {
+  try {
+    const syncPromises = companies.map((company) =>
+      addSavedCompany(company.apolloId, company.companyName),
+    );
+    await Promise.all(syncPromises);
+    return true;
+  } catch (err) {
+    console.error("Exception syncing saved companies:", err);
+    throw err;
+  }
+}
+
+function mapSavedCompanyData(data: any): SavedCompany {
+  return {
+    id: data.id,
+    apolloId: data.apollo_id,
+    companyName: data.company_name,
+    savedAt: data.saved_at,
+    syncStatus: data.sync_status,
+    createdAt: data.created_at,
+  };
+}
