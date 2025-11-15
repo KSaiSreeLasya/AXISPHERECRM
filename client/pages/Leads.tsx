@@ -179,23 +179,20 @@ export default function Leads() {
       return;
     }
 
-    const unassignedLeads = leads.filter((l) => !l.assignedTo);
-    if (unassignedLeads.length === 0) {
+    if (leads.length === 0) {
       toast({
         title: "Info",
-        description: "All leads are already assigned",
+        description: "No leads to assign",
       });
       return;
     }
 
     try {
-      const leadsPerPerson = Math.ceil(
-        unassignedLeads.length / salespersons.length,
-      );
+      const leadsPerPerson = Math.ceil(leads.length / salespersons.length);
       let salesPersonIndex = 0;
       let leadsAssignedThisPerson = 0;
 
-      for (const lead of unassignedLeads) {
+      for (const lead of leads) {
         if (leadsAssignedThisPerson >= leadsPerPerson) {
           salesPersonIndex++;
           leadsAssignedThisPerson = 0;
@@ -216,7 +213,7 @@ export default function Leads() {
 
       toast({
         title: "Success",
-        description: `${unassignedLeads.length} leads assigned to salespersons`,
+        description: `${leads.length} leads distributed equally among ${salespersons.length} salesperson(s)`,
       });
     } catch (error) {
       toast({
