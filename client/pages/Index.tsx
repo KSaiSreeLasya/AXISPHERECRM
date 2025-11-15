@@ -37,27 +37,24 @@ export default function Index() {
 
   const stats = [
     {
-      label: "Total Leads",
-      value: leads.length,
+      label: "My Assigned Leads",
+      value: assignedLeads.length,
       icon: Users,
       color: "bg-blue-100 text-blue-600",
       href: "/leads",
     },
     {
-      label: "Sales Persons",
+      label: "Upcoming Reminders",
+      value: upcomingReminders.length,
+      icon: Calendar,
+      color: "bg-amber-100 text-amber-600",
+    },
+    {
+      label: "Total Sales Persons",
       value: salespersons.length,
       icon: UserCheck,
       color: "bg-green-100 text-green-600",
       href: "/salespersons",
-    },
-    {
-      label: "Leads per Sales Person",
-      value:
-        salespersons.length > 0
-          ? (leads.length / salespersons.length).toFixed(1)
-          : "0",
-      icon: TrendingUp,
-      color: "bg-purple-100 text-purple-600",
     },
   ];
 
