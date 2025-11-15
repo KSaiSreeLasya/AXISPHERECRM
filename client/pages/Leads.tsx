@@ -1,14 +1,35 @@
 import { useState } from "react";
 import { MainLayout } from "@/components/Layout";
-import { Lead, useCRMStore } from "@/hooks/useCRMStore";
+import { Lead, Salesperson, useCRMStore, LeadStatus } from "@/hooks/useCRMStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit2, Plus, X, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
+const LEAD_STATUSES: LeadStatus[] = [
+  "Not lifted",
+  "Not connected",
+  "Voice Message",
+  "Quotation sent",
+  "Site visit",
+  "Advance payment",
+  "Lead finished",
+  "Contacted",
+];
+
+const STATUS_COLORS: Record<LeadStatus, string> = {
+  "Not lifted": "bg-gray-100 text-gray-800",
+  "Not connected": "bg-red-100 text-red-800",
+  "Voice Message": "bg-blue-100 text-blue-800",
+  "Quotation sent": "bg-yellow-100 text-yellow-800",
+  "Site visit": "bg-purple-100 text-purple-800",
+  "Advance payment": "bg-orange-100 text-orange-800",
+  "Lead finished": "bg-green-100 text-green-800",
+  "Contacted": "bg-cyan-100 text-cyan-800",
+};
+
 export default function Leads() {
-  const { leads, addLead, deleteLead, updateLead, isLoading } = useCRMStore();
+  const { leads, salespersons, addLead, deleteLead, updateLead, isLoading } = useCRMStore();
   const { toast } = useToast();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -25,6 +46,7 @@ export default function Leads() {
     companyEmployees: "",
     companyIndustries: [""],
     companyKeywords: [""],
+    status: "Not lifted",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,6 +89,7 @@ export default function Leads() {
         companyEmployees: "",
         companyIndustries: [""],
         companyKeywords: [""],
+        status: "Not lifted",
       });
       setShowForm(false);
     } catch (error) {
@@ -106,6 +129,103 @@ export default function Leads() {
     }
   };
 
+  const handleAutoAssign = async () => {
+    if (salespersons.length === 0) {
+      toast({
+        title: "Error",
+        description: "No salespersons available for assignment",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const unassignedLeads = leads.filter((l) => !l.assignedTo);
+    if (unassignedLeads.length === 0) {
+      toast({
+        title: "Info",
+        description: "All leads are already assigned",
+      });
+      return;
+    }
+
+    try {
+      const leadsPerPerson = Math.ceil(unassignedLeads.length / salespersons.length);
+      let salesPersonIndex = 0;
+      let leadsAssignedThisPerson = 0;
+
+      for (const lead of unassignedLeads) {
+        if (leadsAssignedThisPerson >= leadsPerPerson) {
+          salesPersonIndex++;
+          leadsAssignedThisPerson = 0;
+        }
+
+        if (salesPersonIndex >= salespersons.length) {
+          salesPersonIndex = 0;
+          leadsAssignedThisPerson = 0;
+        }
+
+        await updateLead(lead.id, {
+          ...lead,
+          assignedTo: salespersons[salesPersonIndex].id,
+        });
+
+        leadsAssignedThisPerson++;
+      }
+
+      toast({
+        title: "Success",
+        description: `${unassignedLeads.length} leads assigned to salespersons`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to auto-assign leads",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  };
+
+  const handleStatusChange = async (leadId: string, newStatus: LeadStatus) => {
+    const lead = leads.find((l) => l.id === leadId);
+    if (!lead) return;
+
+    try {
+      await updateLead(leadId, { ...lead, status: newStatus });
+      toast({
+        title: "Success",
+        description: "Lead status updated",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update lead status",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  };
+
+  const handleAssignChange = async (leadId: string, salesPersonId: string) => {
+    const lead = leads.find((l) => l.id === leadId);
+    if (!lead) return;
+
+    try {
+      await updateLead(leadId, { ...lead, assignedTo: salesPersonId || undefined });
+      toast({
+        title: "Success",
+        description: "Lead assignment updated",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update lead assignment",
+        variant: "destructive",
+      });
+      console.error(error);
+    }
+  };
+
   const handleCancel = () => {
     setShowForm(false);
     setEditingId(null);
@@ -121,6 +241,7 @@ export default function Leads() {
       companyEmployees: "",
       companyIndustries: [""],
       companyKeywords: [""],
+      status: "Not lifted",
     });
   };
 
@@ -182,6 +303,12 @@ export default function Leads() {
     }));
   };
 
+  const getSalespersonName = (id?: string) => {
+    if (!id) return "-";
+    const sp = salespersons.find((s) => s.id === id);
+    return sp?.name || "-";
+  };
+
   if (isLoading) {
     return (
       <MainLayout>
@@ -205,13 +332,23 @@ export default function Leads() {
               Manage and track all your sales leads
             </p>
           </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {showForm ? "Cancel" : "Add Lead"}
-          </Button>
+          <div className="flex gap-2">
+            {leads.length > 0 && (
+              <Button
+                onClick={handleAutoAssign}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                Auto-Assign Leads
+              </Button>
+            )}
+            <Button
+              onClick={() => setShowForm(!showForm)}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {showForm ? "Cancel" : "Add Lead"}
+            </Button>
+          </div>
         </div>
 
         {/* Form */}
@@ -280,20 +417,24 @@ export default function Leads() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Company Employees
+                    Status
                   </label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., 100-500"
-                    value={formData.companyEmployees}
+                  <select
+                    value={formData.status || "Not lifted"}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        companyEmployees: e.target.value,
+                        status: e.target.value as LeadStatus,
                       })
                     }
-                    className="w-full"
-                  />
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {LEAD_STATUSES.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -561,190 +702,125 @@ export default function Leads() {
           </div>
         )}
 
-        {/* Leads List */}
-        <div className="grid gap-4">
-          {leads.length === 0 ? (
-            <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
-              <p className="text-slate-600">
-                No leads yet. Add one to get started!
-              </p>
-            </div>
-          ) : (
-            leads.map((lead) => (
-              <div
-                key={lead.id}
-                className="bg-white rounded-lg border border-slate-200 p-6 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-slate-900">
-                      {lead.name}
-                    </h3>
-                    <p className="text-sm text-slate-600">
-                      {lead.jobTitle && `${lead.jobTitle} at `}
-                      {lead.company}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditLead(lead)}
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteLead(lead.id)}
-                      className="text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                  {lead.email && (
-                    <div>
-                      <p className="text-slate-600 font-medium">Email</p>
-                      <p className="text-slate-900 break-all">{lead.email}</p>
-                    </div>
-                  )}
-                  {lead.phoneNumbers?.length > 0 && lead.phoneNumbers[0] && (
-                    <div>
-                      <p className="text-slate-600 font-medium">Phone</p>
-                      <div className="space-y-1">
-                        {lead.phoneNumbers
-                          .filter((p) => p)
-                          .map((phone, idx) => (
-                            <p key={idx} className="text-slate-900">
-                              {phone}
-                            </p>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                  {lead.companyEmployees && (
-                    <div>
-                      <p className="text-slate-600 font-medium">Company Size</p>
-                      <p className="text-slate-900">{lead.companyEmployees}</p>
-                    </div>
-                  )}
-                </div>
-
-                {(lead.locations?.some((l) => l) ||
-                  lead.companyIndustries?.some((i) => i) ||
-                  lead.companyKeywords?.some((k) => k)) && (
-                  <div className="mt-4 pt-4 border-t border-slate-200">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                      {lead.locations?.some((l) => l) && (
-                        <div>
-                          <p className="text-slate-600 font-medium mb-1">
-                            Locations
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {lead.locations
-                              .filter((l) => l)
-                              .map((location, idx) => (
-                                <span
-                                  key={idx}
-                                  className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs"
-                                >
-                                  {location}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-                      )}
-                      {lead.companyIndustries?.some((i) => i) && (
-                        <div>
-                          <p className="text-slate-600 font-medium mb-1">
-                            Industries
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {lead.companyIndustries
-                              .filter((i) => i)
-                              .map((industry, idx) => (
-                                <span
-                                  key={idx}
-                                  className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs"
-                                >
-                                  {industry}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-                      )}
-                      {lead.companyKeywords?.some((k) => k) && (
-                        <div>
-                          <p className="text-slate-600 font-medium mb-1">
-                            Keywords
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {lead.companyKeywords
-                              .filter((k) => k)
-                              .map((keyword, idx) => (
-                                <span
-                                  key={idx}
-                                  className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs"
-                                >
-                                  {keyword}
-                                </span>
-                              ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {lead.actions?.some((a) => a) && (
-                  <div className="mt-4 pt-4 border-t border-slate-200">
-                    <p className="text-slate-600 font-medium mb-2 text-sm">
+        {/* Leads Table */}
+        {leads.length === 0 ? (
+          <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
+            <p className="text-slate-600">
+              No leads yet. Add one to get started!
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Company
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Email
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Assigned To
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
                       Actions
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {lead.actions
-                        .filter((a) => a)
-                        .map((action, idx) => (
-                          <span
-                            key={idx}
-                            className="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs"
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {leads.map((lead, idx) => (
+                    <tr
+                      key={lead.id}
+                      className={idx % 2 === 0 ? "bg-white" : "bg-slate-50"}
+                    >
+                      <td className="px-6 py-4 text-sm">
+                        <div>
+                          <p className="font-medium text-slate-900">
+                            {lead.name}
+                          </p>
+                          {lead.jobTitle && (
+                            <p className="text-xs text-slate-600">
+                              {lead.jobTitle}
+                            </p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">
+                        {lead.company || "-"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">
+                        {lead.email || "-"}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <select
+                          value={lead.status || "Not lifted"}
+                          onChange={(e) =>
+                            handleStatusChange(
+                              lead.id,
+                              e.target.value as LeadStatus,
+                            )
+                          }
+                          className={`px-3 py-1 rounded text-sm font-medium border-0 cursor-pointer ${
+                            STATUS_COLORS[lead.status || "Not lifted"]
+                          }`}
+                        >
+                          {LEAD_STATUSES.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <select
+                          value={lead.assignedTo || ""}
+                          onChange={(e) =>
+                            handleAssignChange(lead.id, e.target.value)
+                          }
+                          className="px-3 py-1 rounded text-sm border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">Unassigned</option>
+                          {salespersons.map((sp) => (
+                            <option key={sp.id} value={sp.id}>
+                              {sp.name}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditLead(lead)}
                           >
-                            {action}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {lead.links?.some((l) => l) && (
-                  <div className="mt-4 pt-4 border-t border-slate-200">
-                    <p className="text-slate-600 font-medium mb-2 text-sm">
-                      Links
-                    </p>
-                    <div className="space-y-1">
-                      {lead.links
-                        .filter((l) => l)
-                        .map((link, idx) => (
-                          <a
-                            key={idx}
-                            href={link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-700 text-sm break-all"
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteLead(lead.id)}
+                            className="text-red-600 hover:bg-red-50"
                           >
-                            {link}
-                          </a>
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </MainLayout>
   );
