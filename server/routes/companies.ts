@@ -109,11 +109,11 @@ export const handleGetCompanies: RequestHandler = async (req, res) => {
 
     res.json({
       companies,
-      total: searchData.pagination?.total_entries || companies.length,
+      total: bookmarksData.pagination?.total_entries || companies.length,
       page,
       limit,
-      hasMore: searchData.pagination?.total_pages
-        ? page < searchData.pagination.total_pages
+      hasMore: bookmarksData.pagination?.total_pages
+        ? page < bookmarksData.pagination.total_pages
         : false,
     });
   } catch (error) {
