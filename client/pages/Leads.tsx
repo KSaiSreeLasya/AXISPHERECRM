@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRoleBasedAccess } from "@/hooks/useRoleBasedAccess";
 import { LeadDetailModal } from "@/components/LeadDetailModal";
+import { formatDateOnlyIST } from "@/lib/formatDateIST";
 
 const LEAD_STATUSES: LeadStatus[] = [
   "Not lifted",
