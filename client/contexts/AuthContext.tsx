@@ -36,27 +36,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } = await supabase.auth.getSession();
 
       if (session?.user) {
-        try {
-          const { data, error } = await supabase
-            .from("salespersons")
-            .select("id, name, email")
-            .eq("auth_id", session.user.id)
-            .single();
+        // Check if it's an admin
+        const isAdmin =
+          session.user.email === "admin@axisphere.in";
 
-          if (error) {
-            console.error("Error fetching salesperson record:", error);
-            return;
-          }
+        if (isAdmin) {
+          setUser({
+            id: "admin",
+            email: session.user.email || "admin@axisphere.in",
+            name: "Admin",
+            role: "admin",
+          });
+        } else {
+          // It's a salesperson
+          try {
+            const { data, error } = await supabase
+              .from("salespersons")
+              .select("id, name, email")
+              .eq("auth_id", session.user.id)
+              .single();
 
-          if (data) {
-            setUser({
-              id: data.id,
-              email: data.email,
-              name: data.name,
-            });
+            if (error) {
+              console.error("Error fetching salesperson record:", error);
+              return;
+            }
+
+            if (data) {
+              setUser({
+                id: data.id,
+                email: data.email,
+                name: data.name,
+                role: "salesperson",
+              });
+            }
+          } catch (dbError) {
+            console.error("Database error during auth check:", dbError);
           }
-        } catch (dbError) {
-          console.error("Database error during auth check:", dbError);
         }
       }
     } catch (error) {
