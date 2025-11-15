@@ -59,6 +59,10 @@ export async function getLeads(): Promise<Lead[]> {
       companyEmployees: item.company_employees,
       companyIndustries: item.company_industries || [],
       companyKeywords: item.company_keywords || [],
+      assignedTo: item.assigned_to,
+      status: item.status || "Not lifted",
+      note: item.note,
+      nextReminderDate: item.next_reminder_date,
       createdAt: item.created_at,
     }));
   } catch (err) {
@@ -69,34 +73,48 @@ export async function getLeads(): Promise<Lead[]> {
 
 export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
   try {
+    const insertData: any = {
+      name: lead.name,
+      job_title: lead.jobTitle,
+      company: lead.company,
+      email: lead.email,
+      phone_numbers: lead.phoneNumbers.filter((p) => p),
+      actions: lead.actions.filter((a) => a),
+      links: lead.links.filter((l) => l),
+      locations: lead.locations.filter((l) => l),
+      company_employees: lead.companyEmployees,
+      company_industries: lead.companyIndustries.filter((i) => i),
+      company_keywords: lead.companyKeywords.filter((k) => k),
+    };
+
+    if (lead.assignedTo) {
+      insertData.assigned_to = lead.assignedTo;
+    }
+    if (lead.status) {
+      insertData.status = lead.status;
+    }
+    if (lead.note) {
+      insertData.note = lead.note;
+    }
+    if (lead.nextReminderDate) {
+      insertData.next_reminder_date = lead.nextReminderDate;
+    }
+
     const { data, error } = await supabase
       .from("leads")
-      .insert([
-        {
-          name: lead.name,
-          job_title: lead.jobTitle,
-          company: lead.company,
-          email: lead.email,
-          phone_numbers: lead.phoneNumbers.filter((p) => p),
-          actions: lead.actions.filter((a) => a),
-          links: lead.links.filter((l) => l),
-          locations: lead.locations.filter((l) => l),
-          company_employees: lead.companyEmployees,
-          company_industries: lead.companyIndustries.filter((i) => i),
-          company_keywords: lead.companyKeywords.filter((k) => k),
-        },
-      ])
+      .insert([insertData])
       .select()
       .single();
 
     if (error) {
-      console.error(
-        "Error adding lead - Code:",
-        error.code,
-        "Message:",
-        error.message,
+      console.error("Error adding lead:", error);
+      throw new Error(
+        `Failed to add lead: ${error.message || "Unknown error"}`,
       );
-      throw new Error(`Failed to add lead: ${error.message}`);
+    }
+
+    if (!data) {
+      throw new Error("No data returned from insert");
     }
 
     return {
@@ -105,13 +123,17 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
       jobTitle: data.job_title,
       company: data.company,
       email: data.email,
-      phoneNumbers: data.phone_numbers,
-      actions: data.actions,
-      links: data.links,
-      locations: data.locations,
+      phoneNumbers: data.phone_numbers || [],
+      actions: data.actions || [],
+      links: data.links || [],
+      locations: data.locations || [],
       companyEmployees: data.company_employees,
-      companyIndustries: data.company_industries,
-      companyKeywords: data.company_keywords,
+      companyIndustries: data.company_industries || [],
+      companyKeywords: data.company_keywords || [],
+      assignedTo: data.assigned_to,
+      status: data.status || "Not lifted",
+      note: data.note,
+      nextReminderDate: data.next_reminder_date,
       createdAt: data.created_at,
     };
   } catch (err) {
@@ -138,6 +160,12 @@ export async function updateLead(id: string, updates: Partial<Lead>) {
     updateData.company_industries = updates.companyIndustries;
   if (updates.companyKeywords !== undefined)
     updateData.company_keywords = updates.companyKeywords;
+  if (updates.assignedTo !== undefined)
+    updateData.assigned_to = updates.assignedTo;
+  if (updates.status !== undefined) updateData.status = updates.status;
+  if (updates.note !== undefined) updateData.note = updates.note;
+  if (updates.nextReminderDate !== undefined)
+    updateData.next_reminder_date = updates.nextReminderDate;
 
   const { error } = await supabase
     .from("leads")

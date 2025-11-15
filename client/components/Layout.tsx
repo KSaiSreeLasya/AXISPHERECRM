@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Users, UserCheck, BarChart3, Building2 } from "lucide-react";
+import { Users, UserCheck, BarChart3, Building2, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +10,7 @@ interface LayoutProps {
 
 export function MainLayout({ children }: LayoutProps) {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: BarChart3 },
@@ -23,14 +26,35 @@ export function MainLayout({ children }: LayoutProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2F59bf3e928fc9473a97d5e87470c824bb%2F8211d605de7443fb8fd45193578c775d?format=webp&width=800"
+                alt="Axisphere Logo"
+                className="h-10 w-auto"
+              />
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">Axisphere</h1>
                 <p className="text-xs text-slate-500">Sales CRM</p>
               </div>
             </div>
+            {user && (
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-sm font-medium text-slate-900">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-slate-500">{user.email}</p>
+                </div>
+                <Button
+                  onClick={logout}
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -66,6 +90,32 @@ export function MainLayout({ children }: LayoutProps) {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {children}
       </main>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center gap-3 mb-6">
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F59bf3e928fc9473a97d5e87470c824bb%2F8211d605de7443fb8fd45193578c775d?format=webp&width=800"
+              alt="Axisphere Logo"
+              className="h-8 w-auto"
+            />
+            <div>
+              <p className="text-sm font-semibold text-slate-900">
+                Axisphere Sales CRM
+              </p>
+              <p className="text-xs text-slate-500">
+                Manage your sales pipeline efficiently
+              </p>
+            </div>
+          </div>
+          <div className="border-t border-slate-200 pt-6 text-center">
+            <p className="text-sm text-slate-600">
+              © 2025 Axisphere. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

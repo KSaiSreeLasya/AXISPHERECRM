@@ -1,10 +1,3 @@
-const APOLLO_API_KEY = import.meta.env.VITE_APOLLO_API_KEY;
-const APOLLO_BASE_URL = "https://api.apollo.io/v1";
-
-if (!APOLLO_API_KEY) {
-  console.warn("Apollo.io API key is not configured");
-}
-
 export interface ApolloCompany {
   id: string;
   name: string;
@@ -38,22 +31,20 @@ async function callApolloAPI(
   method: "GET" | "POST" = "POST",
   body?: Record<string, any>,
 ): Promise<any> {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${APOLLO_API_KEY}`,
-  };
-
   const options: RequestInit = {
-    method,
-    headers,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      endpoint,
+      method,
+      body,
+    }),
   };
-
-  if (body && method === "POST") {
-    options.body = JSON.stringify(body);
-  }
 
   try {
-    const response = await fetch(`${APOLLO_BASE_URL}${endpoint}`, options);
+    const response = await fetch("/api/apollo", options);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -104,15 +95,40 @@ export async function getCompanyDetails(
 }
 
 export async function getSavedCompanies(
-  limit: number = 20,
+  limit: number = 100,
   page: number = 1,
 ): Promise<ApolloCompany[]> {
   try {
-    const response = await callApolloAPI("/organizations", "POST", {
+    const response = await callApolloAPI("/bookmarks", "POST", {
       limit,
       page,
+      type: "organization",
     });
-    return response.organizations || [];
+
+    const organizations = response.bookmarks || response.organizations || [];
+
+    if (organizations.length === 0) {
+      console.log("No saved companies found in Apollo");
+    }
+
+    return organizations.map((org: any) => ({
+      id: org.id || org.organization_id,
+      name: org.name,
+      domain: org.domain,
+      industry: org.industry,
+      employee_count: org.employee_count,
+      employee_count_range: org.employee_count_range,
+      revenue: org.revenue,
+      revenue_range: org.revenue_range,
+      logo_url: org.logo_url,
+      linkedin_url: org.linkedin_url,
+      crunchbase_url: org.crunchbase_url,
+      founded_year: org.founded_year,
+      hq_address: org.hq_address,
+      countries: org.countries,
+      website: org.website,
+      phone: org.phone,
+    }));
   } catch (error) {
     console.error("Error fetching saved companies:", error);
     throw error;
