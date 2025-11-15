@@ -71,36 +71,40 @@ export async function getLeads(): Promise<Lead[]> {
 
 export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
   try {
+    const insertData: any = {
+      name: lead.name,
+      job_title: lead.jobTitle,
+      company: lead.company,
+      email: lead.email,
+      phone_numbers: lead.phoneNumbers.filter((p) => p),
+      actions: lead.actions.filter((a) => a),
+      links: lead.links.filter((l) => l),
+      locations: lead.locations.filter((l) => l),
+      company_employees: lead.companyEmployees,
+      company_industries: lead.companyIndustries.filter((i) => i),
+      company_keywords: lead.companyKeywords.filter((k) => k),
+    };
+
+    if (lead.assignedTo) {
+      insertData.assigned_to = lead.assignedTo;
+    }
+    if (lead.status) {
+      insertData.status = lead.status;
+    }
+
     const { data, error } = await supabase
       .from("leads")
-      .insert([
-        {
-          name: lead.name,
-          job_title: lead.jobTitle,
-          company: lead.company,
-          email: lead.email,
-          phone_numbers: lead.phoneNumbers.filter((p) => p),
-          actions: lead.actions.filter((a) => a),
-          links: lead.links.filter((l) => l),
-          locations: lead.locations.filter((l) => l),
-          company_employees: lead.companyEmployees,
-          company_industries: lead.companyIndustries.filter((i) => i),
-          company_keywords: lead.companyKeywords.filter((k) => k),
-          assigned_to: lead.assignedTo,
-          status: lead.status || "Not lifted",
-        },
-      ])
+      .insert([insertData])
       .select()
       .single();
 
     if (error) {
-      console.error(
-        "Error adding lead - Code:",
-        error.code,
-        "Message:",
-        error.message,
-      );
-      throw new Error(`Failed to add lead: ${error.message}`);
+      console.error("Error adding lead:", error);
+      throw new Error(`Failed to add lead: ${error.message || "Unknown error"}`);
+    }
+
+    if (!data) {
+      throw new Error("No data returned from insert");
     }
 
     return {
@@ -109,13 +113,13 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
       jobTitle: data.job_title,
       company: data.company,
       email: data.email,
-      phoneNumbers: data.phone_numbers,
-      actions: data.actions,
-      links: data.links,
-      locations: data.locations,
+      phoneNumbers: data.phone_numbers || [],
+      actions: data.actions || [],
+      links: data.links || [],
+      locations: data.locations || [],
       companyEmployees: data.company_employees,
-      companyIndustries: data.company_industries,
-      companyKeywords: data.company_keywords,
+      companyIndustries: data.company_industries || [],
+      companyKeywords: data.company_keywords || [],
       assignedTo: data.assigned_to,
       status: data.status || "Not lifted",
       createdAt: data.created_at,
