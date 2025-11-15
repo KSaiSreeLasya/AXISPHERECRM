@@ -579,3 +579,88 @@ function mapSavedCompanyData(data: any): SavedCompany {
     createdAt: data.created_at,
   };
 }
+
+// LEAD NOTES OPERATIONS
+export async function getLeadNotes(leadId: string): Promise<LeadNote[]> {
+  try {
+    const { data, error } = await supabase
+      .from("lead_notes")
+      .select("*")
+      .eq("lead_id", leadId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching lead notes:", error);
+      return [];
+    }
+
+    if (!data) return [];
+
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      leadId: item.lead_id,
+      description: item.description,
+      status: item.status,
+      createdAt: item.created_at,
+      createdBy: item.created_by,
+    }));
+  } catch (err) {
+    console.error("Exception fetching lead notes:", err);
+    return [];
+  }
+}
+
+export async function addLeadNote(
+  leadId: string,
+  description: string,
+  status?: string,
+): Promise<LeadNote> {
+  try {
+    const { data, error } = await supabase
+      .from("lead_notes")
+      .insert([
+        {
+          lead_id: leadId,
+          description,
+          status,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      const errorMsg = error.message || error.code || "Unknown error";
+      console.error("Error adding lead note:", error);
+      throw new Error(`Failed to add lead note: ${errorMsg}`);
+    }
+
+    return {
+      id: data.id,
+      leadId: data.lead_id,
+      description: data.description,
+      status: data.status,
+      createdAt: data.created_at,
+      createdBy: data.created_by,
+    };
+  } catch (err) {
+    console.error("Exception adding lead note:", err);
+    throw err;
+  }
+}
+
+export async function deleteLeadNote(noteId: string) {
+  try {
+    const { error } = await supabase
+      .from("lead_notes")
+      .delete()
+      .eq("id", noteId);
+
+    if (error) {
+      console.error("Error deleting lead note:", error);
+      throw error;
+    }
+  } catch (err) {
+    console.error("Exception deleting lead note:", err);
+    throw err;
+  }
+}
