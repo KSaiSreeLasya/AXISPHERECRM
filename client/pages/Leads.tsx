@@ -850,6 +850,9 @@ export default function Leads() {
                       <td className="px-6 py-4 text-sm text-slate-600">
                         {lead.email || "-"}
                       </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">
+                        {getSalespersonName(lead.assignedTo)}
+                      </td>
                       <td className="px-6 py-4 text-sm">
                         <select
                           value={lead.status || "Not lifted"}
