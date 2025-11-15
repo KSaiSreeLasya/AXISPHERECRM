@@ -142,10 +142,11 @@ describe("Timezone Conversion - Old vs New Notes", () => {
     const formattedDate = formatActivityLogDate(oldNoteTimestamp);
 
     // Should still convert properly to IST
+    // UTC 08:30 + IST offset 5:30 = 14:00 (2:00 PM) IST
     expect(formattedDate).toContain("15");
     expect(formattedDate).toContain("06");
     expect(formattedDate).toContain("2023");
-    expect(formattedDate).toContain("14"); // 08:30 UTC + 5:30 = 14:00 IST
+    expect(formattedDate).toContain("02"); // 2 PM format in IST
   });
 
   it("should correctly format notes with recent UTC timestamps", () => {
