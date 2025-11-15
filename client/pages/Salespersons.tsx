@@ -299,8 +299,7 @@ export default function Salespersons() {
 
                   <div className="mt-4 pt-4 border-t border-slate-200">
                     <p className="text-xs text-slate-500">
-                      Added:{" "}
-                      {new Date(salesperson.createdAt).toLocaleDateString()}
+                      Added: {formatDateOnlyIST(salesperson.createdAt)}
                     </p>
                   </div>
                 </div>
