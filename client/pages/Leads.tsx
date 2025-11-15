@@ -771,6 +771,12 @@ export default function Leads() {
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Note
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
+                      Next Reminder
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
                       Assigned To
                     </th>
                     <th className="px-6 py-3 text-left text-sm font-semibold text-slate-900">
