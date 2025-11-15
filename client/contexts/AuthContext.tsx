@@ -87,7 +87,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .single();
 
         if (dbError) {
-          console.error("Error fetching salesperson record after login:", dbError);
+          console.error(
+            "Error fetching salesperson record after login:",
+            dbError,
+          );
           throw new Error("Could not fetch user profile: " + dbError.message);
         }
 
