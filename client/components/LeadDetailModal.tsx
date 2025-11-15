@@ -209,7 +209,7 @@ export function LeadDetailModal({
                     Next Reminder
                   </label>
                   <p className="text-slate-900">
-                    {new Date(lead.nextReminderDate).toLocaleDateString()}
+                    {formatDateOnlyIST(lead.nextReminderDate)}
                   </p>
                 </div>
               )}
