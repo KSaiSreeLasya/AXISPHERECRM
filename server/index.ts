@@ -58,19 +58,12 @@ export function createServer() {
   // Serve static files in production
   if (process.env.NODE_ENV === "production") {
     app.use(express.static(path.join(process.cwd(), "dist/spa")));
-  }
 
-  // SPA fallback - serve index.html for all non-API routes (catch-all at the end)
-  const spaFallback: RequestHandler = (_req, res) => {
-    if (process.env.NODE_ENV === "production") {
+    // SPA fallback for production only
+    app.get("*", (_req, res) => {
       res.sendFile(path.join(process.cwd(), "dist/spa/index.html"));
-    } else {
-      // In development, return a simple message - Vite will handle the actual page
-      res.send("<!DOCTYPE html><html><body>Not Found</body></html>");
-    }
-  };
-
-  app.get("*", spaFallback);
+    });
+  }
 
   return app;
 }
