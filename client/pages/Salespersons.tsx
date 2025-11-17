@@ -75,13 +75,47 @@ export default function Salespersons() {
     }
   };
 
+  const canEditSalesperson = (salesperson: Salesperson): boolean => {
+    if (!user) return false;
+    if (user.role === "admin") return true;
+    if (user.role === "salesperson" && user.id === salesperson.id) return true;
+    return false;
+  };
+
+  const canDeleteSalesperson = (salesperson: Salesperson): boolean => {
+    if (!user) return false;
+    return user.role === "admin";
+  };
+
+  const canAddSalesperson = (): boolean => {
+    if (!user) return false;
+    return user.role === "admin";
+  };
+
   const handleEditSalesperson = (salesperson: Salesperson) => {
+    if (!canEditSalesperson(salesperson)) {
+      toast({
+        title: "Error",
+        description: "You can only edit your own profile",
+        variant: "destructive",
+      });
+      return;
+    }
     setFormData(salesperson);
     setEditingId(salesperson.id);
     setShowForm(true);
   };
 
   const handleDeleteSalesperson = async (id: string) => {
+    if (!canDeleteSalesperson(salespersons.find((s) => s.id === id)!)) {
+      toast({
+        title: "Error",
+        description: "You do not have permission to delete salespersons",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (confirm("Are you sure you want to delete this sales person?")) {
       try {
         await deleteSalesperson(id);
