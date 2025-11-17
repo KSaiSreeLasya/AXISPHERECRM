@@ -67,18 +67,134 @@ export default function InvoiceView() {
   }, [invoiceId, getInvoiceById, navigate, toast]);
 
   const handleDownloadPDF = async () => {
-    if (!invoiceRef.current) return;
-
     setIsDownloading(true);
     try {
-      const element = invoiceRef.current.cloneNode(true) as HTMLElement;
+      const element = document.createElement("div");
+      element.innerHTML = `
+        <div style="page-break-after: always; padding: 48px; min-height: 100vh; background: white;">
+          <!-- Page 1: Bill -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px;">
+            <div>
+              <img src="${companyInfo.logo}" alt="Axisphere" style="height: 48px; margin-bottom: 8px;" />
+              <h1 style="font-size: 36px; font-weight: bold; color: #9333ea; margin-bottom: 8px;">Axisphere</h1>
+              <div style="font-size: 14px; color: #475569;">
+                ${companyInfo.address.split("\n").map(line => `<div>${line}</div>`).join("")}
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <p style="font-size: 14px; font-weight: 600; color: #1e293b;">Invoice Number: ${invoice?.invoiceNumber}</p>
+              <p style="font-size: 14px; color: #64748b;">Date: ${formatDate(invoice!.createdAt)}</p>
+              <p style="font-size: 14px; color: #64748b;">Due Date: ${getDueDate(invoice!.createdAt)}</p>
+            </div>
+          </div>
+
+          <div style="border-bottom: 2px solid #cbd5e1; margin-bottom: 32px;"></div>
+
+          <!-- Bill To Section -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-bottom: 48px;">
+            <div>
+              <p style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 12px;">BILL TO</p>
+              <p style="font-weight: 600; color: #1e293b;">${invoice?.fullName}</p>
+              <p style="font-size: 14px; color: #64748b;">${invoice?.email}</p>
+              <p style="font-size: 14px; color: #64748b;">${invoice?.phoneNumber}</p>
+            </div>
+            <div style="text-align: right;">
+              <p style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 12px;">PAYMENT TERMS</p>
+              <p style="font-size: 14px; color: #64748b;">Due within 30 days</p>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <table style="width: 100%; margin-bottom: 32px; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 2px solid #cbd5e1;">
+                <th style="text-align: left; padding: 12px 16px; font-weight: 600; color: #1e293b;">Description</th>
+                <th style="text-align: center; padding: 12px 16px; font-weight: 600; color: #1e293b; width: 80px;">Qty</th>
+                <th style="text-align: right; padding: 12px 16px; font-weight: 600; color: #1e293b; width: 112px;">Rate</th>
+                <th style="text-align: right; padding: 12px 16px; font-weight: 600; color: #1e293b; width: 112px;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid #e2e8f0;">
+                <td style="padding: 16px; color: #1e293b;">${invoice?.packageName} - Full Package</td>
+                <td style="text-align: center; padding: 16px; color: #1e293b;">1</td>
+                <td style="text-align: right; padding: 16px; color: #1e293b;">₹${invoice?.packagePrice.toLocaleString()}.00</td>
+                <td style="text-align: right; padding: 16px; color: #1e293b;">₹${invoice?.packagePrice.toLocaleString()}.00</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Totals Section -->
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 32px;">
+            <div style="width: 320px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 12px; color: #1e293b;">
+                <span>Subtotal:</span>
+                <span>₹${subtotal.toLocaleString()}.00</span>
+              </div>
+              <div style="border-top: 2px solid #e9d5ff; padding-top: 12px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; color: #1e293b; margin-bottom: 12px;">
+                  <span>Tax (18% GST):</span>
+                  <span>₹${tax.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+              <div style="border-top: 2px solid #e9d5ff; padding-top: 12px; background: #faf5ff; padding: 12px; border-radius: 4px;">
+                <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; color: #a855f7;">
+                  <span>Total Amount Due</span>
+                  <span>₹${total.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top: 2px solid #cbd5e1; padding-top: 24px; text-align: center; font-size: 14px; color: #64748b;">
+            Thank you for your business! For inquiries, contact hello@ai-marketing.studio
+          </div>
+        </div>
+
+        <div style="padding: 48px; min-height: 100vh; background: white;">
+          <!-- Page 2: Scope/Features -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 48px;">
+            <div>
+              <img src="${companyInfo.logo}" alt="Axisphere" style="height: 48px; margin-bottom: 8px;" />
+              <h1 style="font-size: 36px; font-weight: bold; color: #9333ea; margin-bottom: 8px;">Axisphere</h1>
+            </div>
+            <div style="text-align: right;">
+              <p style="font-size: 14px; font-weight: 600; color: #1e293b;">Invoice Number: ${invoice?.invoiceNumber}</p>
+            </div>
+          </div>
+
+          <h2 style="font-size: 24px; font-weight: bold; color: #1e293b; margin-bottom: 32px;">Package Scope & Features</h2>
+
+          <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 16px;">${invoice?.packageName}</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+              ${invoice?.scope.map((feature) => `
+                <div style="display: flex; gap: 12px; padding: 16px; border-radius: 4px; border: 1px solid ${feature.included ? "#dcfce7" : "#e2e8f0"}; background: ${feature.included ? "#f0fdf4" : "#f8fafc"}; opacity: ${feature.included ? "1" : "0.6"};">
+                  <div style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; background: ${feature.included ? "#16a34a" : "#cbd5e1"};">
+                    ${feature.included ? '<svg style="width: 12px; height: 12px; color: white; fill: none; stroke: currentColor;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ""}
+                  </div>
+                  <span style="font-size: 14px; color: ${feature.included ? "#1e293b" : "#64748b"}; font-weight: ${feature.included ? "500" : "400"}">${feature.name}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          ${invoice?.additionalNotes ? `
+            <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #e2e8f0;">
+              <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 16px;">Additional Notes</h3>
+              <p style="color: #334155; white-space: pre-wrap;">${invoice.additionalNotes}</p>
+            </div>
+          ` : ""}
+        </div>
+      `;
 
       const opt = {
-        margin: 10,
+        margin: 0,
         filename: `${invoice?.invoiceNumber || "invoice"}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { orientation: "portrait", unit: "mm", format: "a4" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
       };
 
       html2pdf().set(opt).from(element).save();
@@ -134,7 +250,7 @@ export default function InvoiceView() {
     name: "Axisphere Media Worx LLP",
     address:
       "Plot no.102, 103, Temple Lane, Mythri Nagar,\nMathrusri Nagar, Madinaguda, Serilingampally,\nK.V.Rangareddy-500049, Telangana, India",
-    logo: "https://cdn.builder.io/api/v1/image/assets%2Fa31d1200efef4b74975fb36c4890f8c1%2F8211d605de7443fb8fd45193578c775d?format=webp&width=200",
+    logo: "https://cdn.builder.io/api/v1/image/assets%2Fb5c10d30dd9640a781344ff4fc001c04%2Fe6fb8ec4efaa4324ab864b0baab2aa17?format=webp&width=800",
   };
 
   const formatDate = (dateString: string) => {
