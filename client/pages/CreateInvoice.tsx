@@ -239,16 +239,15 @@ export default function CreateInvoice() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Company Name *
+                  Company Name
                 </label>
                 <Input
                   type="text"
-                  placeholder="Your Company"
+                  placeholder="Your Company (Optional)"
                   value={formData.companyName}
                   onChange={(e) =>
                     setFormData({ ...formData, companyName: e.target.value })
                   }
-                  required
                 />
               </div>
             </div>
