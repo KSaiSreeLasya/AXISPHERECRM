@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit2, Plus, Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { formatDateOnlyIST } from "@/lib/formatDateIST";
 
 export default function Salespersons() {
@@ -15,6 +16,7 @@ export default function Salespersons() {
     updateSalesperson,
     isLoading,
   } = useCRMStore();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
