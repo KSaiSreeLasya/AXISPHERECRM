@@ -4,6 +4,10 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+// Debug: log if keys are loaded
+console.log("[Leads Route] Supabase URL loaded:", !!supabaseUrl);
+console.log("[Leads Route] Service Role Key loaded:", !!supabaseServiceKey);
+
 if (!supabaseUrl) {
   console.error("Missing VITE_SUPABASE_URL on server");
 }
