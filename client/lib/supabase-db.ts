@@ -783,8 +783,8 @@ export async function addInvoice(
       .single();
 
     if (error) {
-      const errorMsg = error.message || error.code || "Unknown error";
       console.error("Error adding invoice:", error);
+      const errorMsg = String(error?.message || error?.code || "Unknown error");
       throw new Error(`Failed to add invoice: ${errorMsg}`);
     }
 
