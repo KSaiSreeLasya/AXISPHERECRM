@@ -163,18 +163,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      // Step 1: Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      // Step 1: Create auth user via server-side endpoint
+      let authData;
+      try {
+        const response = await fetch("/api/auth/sign-up", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
 
-      if (authError) {
-        console.error("Auth sign up error:", authError);
-        throw new Error(authError.message || "Failed to create account");
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.error || "Failed to create account";
+          console.error("Auth sign up error:", errorMessage);
+          throw new Error(errorMessage);
+        }
+
+        authData = await response.json();
+      } catch (err) {
+        if (err instanceof Error) {
+          throw err;
+        }
+        console.error("Auth sign up exception:", err);
+        throw new Error("Authentication service error. Please try again.");
       }
 
-      if (!authData.user) {
+      if (!authData?.user) {
         throw new Error("No user returned from signup");
       }
 
