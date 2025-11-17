@@ -159,6 +159,8 @@ export default function Admin() {
       });
       setPassword("");
       setConfirmPassword("");
+      setShowPassword(false);
+      setShowConfirmPassword(false);
       setShowForm(false);
     } catch (error) {
       toast({
