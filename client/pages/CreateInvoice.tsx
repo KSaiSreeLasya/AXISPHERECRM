@@ -297,7 +297,7 @@ export default function CreateInvoice() {
             <h3 className="text-lg font-semibold text-slate-900 mb-4">
               Pricing & Payment
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Package Price
@@ -311,11 +311,30 @@ export default function CreateInvoice() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Tax (18% GST)
+                  GST Percentage (%)
                 </label>
                 <Input
                   type="number"
-                  value={(selectedPackage.price * 0.18).toFixed(2)}
+                  placeholder="e.g., 18"
+                  value={formData.taxPercentage}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      taxPercentage: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Tax Amount
+                </label>
+                <Input
+                  type="number"
+                  value={(selectedPackage.price * (formData.taxPercentage / 100)).toFixed(2)}
                   disabled
                   className="bg-slate-50"
                 />
