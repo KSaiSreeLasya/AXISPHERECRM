@@ -186,6 +186,8 @@ export default function Admin() {
     setEditingId(salesperson.id);
     setPassword("");
     setConfirmPassword("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     setShowForm(true);
   };
 
