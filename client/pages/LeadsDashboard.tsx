@@ -282,12 +282,14 @@ export default function LeadsDashboard() {
       </div>
 
       {/* Lead Detail Modal */}
-      <LeadDetailModal
-        lead={selectedLead!}
-        isOpen={!!selectedLead}
-        onClose={() => setSelectedLead(null)}
-        onUpdate={updateLead}
-      />
+      {selectedLead && (
+        <LeadDetailModal
+          lead={selectedLead}
+          isOpen={!!selectedLead}
+          onClose={() => setSelectedLead(null)}
+          onUpdate={updateLead}
+        />
+      )}
     </MainLayout>
   );
 }
