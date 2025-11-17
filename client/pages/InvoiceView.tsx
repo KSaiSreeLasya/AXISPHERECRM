@@ -466,9 +466,10 @@ export default function InvoiceView() {
           )}
 
           {/* Page 2: Scope/Features */}
-          {currentPage === 2 && (
-            <div className="p-12 min-h-screen bg-white">
-               <div className="flex justify-between items-start mb-12">
+{currentPage === 2 && (
+  <div className="p-12 min-h-screen bg-white">
+
+    <div className="flex justify-between items-start mb-12">
       <div>
         <img
           src={companyInfo.logo}
@@ -484,17 +485,17 @@ export default function InvoiceView() {
           Invoice Bill
         </h2>
       </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-slate-900">
-                    Invoice Number: {invoice.invoiceNumber}
-                  </p>
-                </div>
-              </div>
 
-              <h2 className="text-2xl font-bold text-slate-900 mb-8">
-                Package Scope & Features
-              </h2>
+      <div className="text-right">
+        <p className="text-sm font-semibold text-slate-900">
+          Invoice Number: {invoice.invoiceNumber}
+        </p>
+      </div>
+    </div>
+
+    <h2 className="text-2xl font-bold text-slate-900 mb-8">
+      Package Scope & Features
+    </h2>
 
               <div className="mb-6">
                 <h3 className="text-lg font-semibold text-slate-900 mb-4">
