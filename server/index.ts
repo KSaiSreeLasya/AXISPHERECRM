@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { handleDemo } from "./routes/demo";
 import { handleApolloProxy } from "./routes/apollo";
 import { handleGetCompanies } from "./routes/companies";
@@ -53,6 +54,16 @@ export function createServer() {
 
   // Apollo proxy
   app.post("/api/apollo", handleApolloProxy);
+
+  // Serve static files in production
+  if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(process.cwd(), "dist/spa")));
+
+    // SPA fallback for production only
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(process.cwd(), "dist/spa/index.html"));
+    });
+  }
 
   return app;
 }
