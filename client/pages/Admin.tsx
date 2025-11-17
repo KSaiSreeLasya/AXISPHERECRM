@@ -111,20 +111,26 @@ export default function Admin() {
         });
         setEditingId(null);
       } else {
-        // Create new salesperson with auth
+        // Create new salesperson with auth using server endpoint
         let authUserId: string | undefined;
         try {
-          const { data: authData, error: authError } =
-            await supabase.auth.signUp({
+          const response = await fetch("/api/auth/sign-up", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
               email: formData.email,
               password,
-            });
+            }),
+          });
 
-          if (authError) {
-            const errorMessage =
-              authError.message || authError.code || "Failed to create account";
-            throw new Error(errorMessage);
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: "Failed to create account" }));
+            throw new Error(errorData.error || "Failed to create account");
           }
+
+          const authData = await response.json();
 
           if (!authData.user) {
             throw new Error("No user returned from signup");
