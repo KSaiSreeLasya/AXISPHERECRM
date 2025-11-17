@@ -287,11 +287,12 @@ export default function Salespersons() {
                       <p className="text-xs text-slate-500 mt-1">
                         ID: {salesperson.id}
                       </p>
-                      {user?.role === "salesperson" && user.id === salesperson.id && (
-                        <p className="text-xs text-blue-600 font-medium mt-1">
-                          (Your Profile)
-                        </p>
-                      )}
+                      {user?.role === "salesperson" &&
+                        user.id === salesperson.id && (
+                          <p className="text-xs text-blue-600 font-medium mt-1">
+                            (Your Profile)
+                          </p>
+                        )}
                     </div>
                     <div className="flex gap-2">
                       {canEditSalesperson(salesperson) && (
@@ -312,7 +313,9 @@ export default function Salespersons() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDeleteSalesperson(salesperson.id)}
+                          onClick={() =>
+                            handleDeleteSalesperson(salesperson.id)
+                          }
                           className="text-red-600 hover:bg-red-50"
                           title="Delete salesperson"
                         >

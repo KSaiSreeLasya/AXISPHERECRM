@@ -3,7 +3,16 @@ import { MainLayout } from "@/components/Layout";
 import { Salesperson, useCRMStore } from "@/hooks/useCRMStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Edit2, Plus, X, Loader2, LogOut, Eye, EyeOff } from "lucide-react";
+import {
+  Trash2,
+  Edit2,
+  Plus,
+  X,
+  Loader2,
+  LogOut,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -126,7 +135,9 @@ export default function Admin() {
           });
 
           if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: "Failed to create account" }));
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: "Failed to create account" }));
             throw new Error(errorData.error || "Failed to create account");
           }
 
@@ -384,9 +395,15 @@ export default function Admin() {
                       />
                       <button
                         type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-                        title={showConfirmPassword ? "Hide password" : "Show password"}
+                        title={
+                          showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="w-4 h-4" />

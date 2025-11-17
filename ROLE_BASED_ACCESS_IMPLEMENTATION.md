@@ -11,12 +11,14 @@ This document summarizes the role-based access control implementation for salesp
 The application now enforces role-based permissions for salesperson operations:
 
 ### Admin Role
+
 - Can create new salespersons (Admin panel only)
 - Can edit any salesperson
 - Can delete any salesperson
 - Can view password visibility with eye icon when creating
 
 ### Salesperson Role
+
 - Can view all salespersons
 - Can edit only their own profile
 - Cannot delete anyone
@@ -30,6 +32,7 @@ The application now enforces role-based permissions for salesperson operations:
 ### 1. **Salespersons.tsx** - General Salesperson Listing Page
 
 **Features Added:**
+
 - ✅ Hidden "Add Sales Person" button for non-admin users
 - ✅ Hidden Edit/Delete buttons for salespersons viewing others' profiles
 - ✅ Show Edit button only for salespersons viewing their own profile
@@ -38,6 +41,7 @@ The application now enforces role-based permissions for salesperson operations:
 - ✅ Updated subtitle based on user role ("Manage" for admin, "View" for salesperson)
 
 **Code Changes:**
+
 ```typescript
 // Permission check functions added:
 - canEditSalesperson(salesperson) - Admin can edit anyone, salesperson can edit self
@@ -46,8 +50,9 @@ The application now enforces role-based permissions for salesperson operations:
 ```
 
 **Visibility Logic:**
+
 - Add button: Only visible to admin
-- Edit button: 
+- Edit button:
   - Admin: Always visible for all salespersons
   - Salesperson: Only visible for their own profile
 - Delete button: Only visible to admin
@@ -56,6 +61,7 @@ The application now enforces role-based permissions for salesperson operations:
 ### 2. **Admin.tsx** - Admin Panel
 
 **Features Added:**
+
 - ✅ Password visibility toggle with eye/eye-off icon
 - ✅ Eye icon button next to password fields
 - ✅ Click to show/hide password while typing
@@ -63,6 +69,7 @@ The application now enforces role-based permissions for salesperson operations:
 - ✅ Visibility state resets when form is closed or submitted
 
 **Code Changes:**
+
 ```typescript
 // State added:
 - showPassword: boolean
@@ -83,7 +90,9 @@ The application now enforces role-based permissions for salesperson operations:
 ## 🎯 User Experience by Role
 
 ### For Admin Users
+
 **Salespersons Page:**
+
 ```
 ✅ "Add Sales Person" button visible
 ✅ Can see Edit button for all salespersons
@@ -93,6 +102,7 @@ The application now enforces role-based permissions for salesperson operations:
 ```
 
 **Admin Panel (Auto-redirects to Admin page when accessing /admin):**
+
 ```
 ✅ Full CRUD operations for salespersons
 ✅ Password visibility toggle when creating new salesperson
@@ -101,7 +111,9 @@ The application now enforces role-based permissions for salesperson operations:
 ```
 
 ### For Salesperson Users
+
 **Salespersons Page:**
+
 ```
 ❌ "Add Sales Person" button NOT visible
 ❌ Cannot see Edit button on other salespersons' cards
@@ -112,6 +124,7 @@ The application now enforces role-based permissions for salesperson operations:
 ```
 
 **Admin Page:**
+
 ```
 ❌ Access denied message shown
 ❌ Cannot access admin functionality
@@ -122,12 +135,16 @@ The application now enforces role-based permissions for salesperson operations:
 ## 🔐 Security & Validation
 
 ### Permission Validation
+
 All permission checks are done both:
+
 1. **Frontend** - For UX (hiding buttons)
 2. **Backend** - In useCRMStore (actual operations)
 
 ### Toast Messages
+
 Users get clear feedback when attempting unauthorized actions:
+
 - "You can only edit your own profile" - Salesperson trying to edit another
 - "You do not have permission to delete salespersons" - Non-admin trying to delete
 - Access denied message for non-admins accessing /admin
@@ -137,6 +154,7 @@ Users get clear feedback when attempting unauthorized actions:
 ## 🧪 Testing Checklist
 
 ### Test as Admin User
+
 - [ ] Login with admin credentials
 - [ ] Navigate to Sales Persons page
 - [ ] "Add Sales Person" button is visible
@@ -151,6 +169,7 @@ Users get clear feedback when attempting unauthorized actions:
 - [ ] Confirm password field also has eye icon
 
 ### Test as Salesperson User
+
 - [ ] Login with salesperson credentials
 - [ ] Navigate to Sales Persons page
 - [ ] "Add Sales Person" button is NOT visible
@@ -170,6 +189,7 @@ Users get clear feedback when attempting unauthorized actions:
 ## 📱 Mobile Responsiveness
 
 All changes maintain responsive design:
+
 - Buttons stack properly on mobile
 - Form layouts adapt to screen size
 - Eye icon visibility toggle works on touch devices
@@ -179,6 +199,7 @@ All changes maintain responsive design:
 ## 🔄 State Management
 
 Password visibility states are properly managed:
+
 - Reset when form is closed
 - Reset when form is submitted
 - Reset when opening edit form
@@ -190,6 +211,7 @@ Password visibility states are properly managed:
 ## 🚀 Deployment Notes
 
 No backend changes required. The implementation uses:
+
 - Client-side role checking (already available in AuthContext)
 - No new database columns
 - No new API endpoints

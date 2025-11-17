@@ -172,7 +172,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: "Failed to create account" }));
+          const errorData = await response
+            .json()
+            .catch(() => ({ error: "Failed to create account" }));
           throw new Error(errorData.error || "Failed to create account");
         }
 
