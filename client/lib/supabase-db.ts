@@ -805,7 +805,7 @@ export async function addInvoice(
       scope: data.scope || [],
       paidAmount: data.paid_amount,
       additionalNotes: data.additional_notes,
-      taxPercentage: data.tax_percentage || 18,
+      taxPercentage: data.tax_percentage || 0,
       createdAt: data.created_at,
     };
   } catch (err) {
@@ -842,7 +842,7 @@ export async function getInvoiceById(id: string): Promise<Invoice | null> {
       scope: data.scope || [],
       paidAmount: data.paid_amount,
       additionalNotes: data.additional_notes,
-      taxPercentage: data.tax_percentage || 18,
+      taxPercentage: data.tax_percentage || 0,
       createdAt: data.created_at,
     };
   } catch (err) {
