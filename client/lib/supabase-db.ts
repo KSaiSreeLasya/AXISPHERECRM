@@ -759,7 +759,7 @@ export async function addInvoice(
   invoice: Omit<Invoice, "id" | "invoiceNumber" | "createdAt">,
 ): Promise<Invoice> {
   try {
-    const invoiceNumber = `AXI-${new Date().getFullYear()}${String((new Date().getMonth() + 1)).padStart(2, "0")}-${String(Math.floor(Math.random() * 10000)).padStart(5, "0")}`;
+    const invoiceNumber = `AXI-${new Date().getFullYear()}${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(Math.floor(Math.random() * 10000)).padStart(5, "0")}`;
 
     const { data, error } = await supabase
       .from("invoices")

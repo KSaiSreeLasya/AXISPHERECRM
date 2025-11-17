@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useInvoiceStore } from "@/hooks/useInvoiceStore";
 import { Invoice } from "@/lib/supabase-db";
-import { Loader2, ArrowLeft, Download, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Loader2,
+  ArrowLeft,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import html2pdf from "html2pdf.js";
 
 export default function InvoiceView() {
@@ -66,7 +72,7 @@ export default function InvoiceView() {
     setIsDownloading(true);
     try {
       const element = invoiceRef.current.cloneNode(true) as HTMLElement;
-      
+
       const opt = {
         margin: 10,
         filename: `${invoice?.invoiceNumber || "invoice"}.pdf`,
@@ -126,7 +132,8 @@ export default function InvoiceView() {
 
   const companyInfo = {
     name: "Axisphere Media Worx LLP",
-    address: "Plot no.102, 103, Temple Lane, Mythri Nagar,\nMathrusri Nagar, Madinaguda, Serilingampally,\nK.V.Rangareddy-500049, Telangana, India",
+    address:
+      "Plot no.102, 103, Temple Lane, Mythri Nagar,\nMathrusri Nagar, Madinaguda, Serilingampally,\nK.V.Rangareddy-500049, Telangana, India",
     logo: "https://cdn.builder.io/api/v1/image/assets%2Fa31d1200efef4b74975fb36c4890f8c1%2F8211d605de7443fb8fd45193578c775d?format=webp&width=200",
   };
 
@@ -281,13 +288,25 @@ export default function InvoiceView() {
                   <div className="border-t-2 border-purple-300 pt-3 mb-3">
                     <div className="flex justify-between text-slate-900 mb-3">
                       <span>Tax (18% GST):</span>
-                      <span>₹{tax.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span>
+                        ₹
+                        {tax.toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
                     </div>
                   </div>
                   <div className="border-t-2 border-purple-300 pt-3 bg-purple-50 px-4 py-3 rounded">
                     <div className="flex justify-between text-lg font-bold text-purple-600">
                       <span>Total Amount Due</span>
-                      <span>₹{total.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      <span>
+                        ₹
+                        {total.toLocaleString("en-IN", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -341,9 +360,7 @@ export default function InvoiceView() {
                     >
                       <div
                         className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
-                          feature.included
-                            ? "bg-green-600"
-                            : "bg-slate-300"
+                          feature.included ? "bg-green-600" : "bg-slate-300"
                         }`}
                       >
                         {feature.included && (

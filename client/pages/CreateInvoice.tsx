@@ -138,9 +138,7 @@ export default function CreateInvoice() {
       toast({
         title: "Error",
         description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create invoice",
+          error instanceof Error ? error.message : "Failed to create invoice",
         variant: "destructive",
       });
       console.error(error);
@@ -275,7 +273,10 @@ export default function CreateInvoice() {
             </p>
             <div className="space-y-3">
               {selectedPackage.features.map((feature, idx) => (
-                <div key={idx} className="flex items-start gap-3 p-3 rounded border border-slate-200 hover:bg-slate-50">
+                <div
+                  key={idx}
+                  className="flex items-start gap-3 p-3 rounded border border-slate-200 hover:bg-slate-50"
+                >
                   <Checkbox
                     id={`feature-${idx}`}
                     checked={selectedFeatures[feature] || false}
@@ -334,7 +335,10 @@ export default function CreateInvoice() {
                 </label>
                 <Input
                   type="number"
-                  value={(selectedPackage.price * (formData.taxPercentage / 100)).toFixed(2)}
+                  value={(
+                    selectedPackage.price *
+                    (formData.taxPercentage / 100)
+                  ).toFixed(2)}
                   disabled
                   className="bg-slate-50"
                 />

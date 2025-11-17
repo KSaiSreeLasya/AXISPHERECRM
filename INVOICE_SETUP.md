@@ -8,7 +8,7 @@ The invoice management system includes:
 
 - **Package Management**: Pre-defined AI marketing packages (Starter, Growth, Enterprise)
 - **Invoice Creation**: Create invoices with customer details and selected package features
-- **Multi-page Invoice Display**: 
+- **Multi-page Invoice Display**:
   - Page 1: Professional invoice bill with pricing
   - Page 2: Scope and features included in the package
 - **PDF Export**: Download invoices as PDF files
@@ -85,6 +85,7 @@ If policies are not showing, they may already be enabled from the migration scri
 The invoice displays in two pages:
 
 **Page 1 - Bill:**
+
 - Company header with logo
 - Invoice number and dates
 - Bill to (customer) section
@@ -94,6 +95,7 @@ The invoice displays in two pages:
 - Footer with contact information
 
 **Page 2 - Scope & Features:**
+
 - Package name and description
 - All available features in a grid layout
 - Selected features are marked with a green checkmark
@@ -159,7 +161,8 @@ const companyInfo = {
 
 ### "Permission denied" when creating invoices
 
-**Solution:** 
+**Solution:**
+
 1. Make sure RLS policies are created for the `invoices` table
 2. Verify you're logged in as an authenticated user
 3. Check that your Supabase session is active
@@ -167,11 +170,13 @@ const companyInfo = {
 ### PDF download not working
 
 **Possible causes:**
+
 - Browser pop-up blockers blocking the download
 - JavaScript errors in the console (check F12 developer tools)
 - The html2pdf.js library may not be properly installed
 
 **Solution:**
+
 ```bash
 pnpm add html2pdf.js
 ```
@@ -179,6 +184,7 @@ pnpm add html2pdf.js
 ### Invoice number format is incorrect
 
 The invoice number is automatically generated in format: `AXI-YYYYMM-XXXXX` where:
+
 - `AXI` = Company prefix
 - `YYYYMM` = Year and month
 - `XXXXX` = Random 5-digit number
@@ -190,6 +196,7 @@ To change this format, edit the `addInvoice` function in `client/lib/supabase-db
 ### Invoice Types
 
 The system currently supports:
+
 - Full package invoices with all features included
 - Partial package invoices with selective features
 - Custom pricing with automatic tax calculation (18% GST)

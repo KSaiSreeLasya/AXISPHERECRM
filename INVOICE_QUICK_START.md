@@ -49,23 +49,28 @@ The invoice management system is fully implemented and ready to use! All code ha
 ## 🎯 Key Flows
 
 ### Create Invoice Flow:
+
 Admin Panel → Invoices Tab → Create Invoice → Fill Form → View → Download PDF
 
 ### View Invoices Flow:
+
 Admin Panel → Invoices Tab → View All Invoices → Table List
 
 ## 📦 What's Included
 
 **3 Pre-configured Packages:**
+
 - ✅ Starter (30K/month, 10 features)
-- ✅ Growth (75K/month, 12 features)  
+- ✅ Growth (75K/month, 12 features)
 - ✅ Enterprise (150K/month, 11 features)
 
 **Invoice Pages:**
+
 - ✅ Page 1: Professional bill with pricing
 - ✅ Page 2: Scope and features list
 
 **Features:**
+
 - ✅ Automatic invoice number generation
 - ✅ Tax calculation (18% GST)
 - ✅ Feature selection
@@ -75,16 +80,21 @@ Admin Panel → Invoices Tab → View All Invoices → Table List
 ## 🔧 Optional Customizations
 
 ### Change Packages
+
 Edit: `client/lib/packages.ts`
 
 ### Change Company Info
+
 Edit: `client/pages/InvoiceView.tsx`
+
 - Company name
 - Address
 - Logo URL
 
 ### Change Tax Percentage
+
 Look for `taxPercentage: 18` in:
+
 - `client/pages/CreateInvoice.tsx`
 - `client/lib/supabase-db.ts`
 
@@ -113,7 +123,9 @@ A: Yes! All operations require authentication and have RLS policies
 The invoice system is production-ready. Just run the SQL migration in Supabase and start creating invoices!
 
 ### Still have questions?
+
 See detailed guides in:
+
 - `INVOICE_SETUP.md` - Full setup guide
 - `INVOICE_IMPLEMENTATION_SUMMARY.md` - Technical details
 

@@ -20,12 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { formatDateOnlyIST } from "@/lib/formatDateIST";
 import { PACKAGES } from "@/lib/packages";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Admin() {
   const {
@@ -283,7 +278,9 @@ export default function Admin() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-3xl font-bold text-slate-900">Admin Panel</h2>
-            <p className="text-slate-600 mt-1">Manage operations and invoices</p>
+            <p className="text-slate-600 mt-1">
+              Manage operations and invoices
+            </p>
           </div>
           <Button
             onClick={handleLogout}
@@ -408,9 +405,7 @@ export default function Admin() {
                             type={showConfirmPassword ? "text" : "password"}
                             placeholder="Confirm password"
                             value={confirmPassword}
-                            onChange={(e) =>
-                              setConfirmPassword(e.target.value)
-                            }
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             className="w-full pr-10"
                           />
                           <button

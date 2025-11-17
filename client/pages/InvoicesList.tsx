@@ -61,9 +61,7 @@ export default function InvoicesList() {
           </Button>
           <div>
             <h2 className="text-3xl font-bold text-slate-900">All Invoices</h2>
-            <p className="text-slate-600 mt-1">
-              Manage and view your invoices
-            </p>
+            <p className="text-slate-600 mt-1">Manage and view your invoices</p>
           </div>
         </div>
 

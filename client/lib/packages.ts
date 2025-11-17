@@ -12,7 +12,8 @@ export const PACKAGES: Package[] = [
     id: "starter",
     name: "AI Starter Package",
     price: 30000,
-    description: "Scalable, results-driven solutions designed to grow with your business.",
+    description:
+      "Scalable, results-driven solutions designed to grow with your business.",
     monthlyLabel: "/month",
     features: [
       "20 AI-generated social media posts per month",
@@ -31,7 +32,8 @@ export const PACKAGES: Package[] = [
     id: "growth",
     name: "AI Growth Package",
     price: 75000,
-    description: "Scalable, results-driven solutions designed to grow with your business.",
+    description:
+      "Scalable, results-driven solutions designed to grow with your business.",
     monthlyLabel: "/month",
     features: [
       "50 AI-generated social media posts per month",
@@ -52,7 +54,8 @@ export const PACKAGES: Package[] = [
     id: "enterprise",
     name: "AI Enterprise Package",
     price: 150000,
-    description: "Scalable, results-driven solutions designed to grow with your business.",
+    description:
+      "Scalable, results-driven solutions designed to grow with your business.",
     monthlyLabel: "/month",
     features: [
       "100+ AI-generated social media posts per month",
