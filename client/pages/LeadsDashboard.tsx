@@ -84,6 +84,42 @@ export default function LeadsDashboard() {
     return salesperson?.name || "Unknown";
   };
 
+  const handleDragStart = (lead: Lead) => {
+    setDraggingLead(lead);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingLead(null);
+    setDragOverStatus(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.currentTarget.style.opacity = "1";
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (e.currentTarget === e.target) {
+      setDragOverStatus(null);
+    }
+  };
+
+  const handleDrop = async (status: LeadStatus) => {
+    if (!draggingLead) return;
+
+    const currentStatus = (draggingLead.status || "No Stage") as LeadStatus;
+    if (currentStatus !== status) {
+      try {
+        await updateLead(draggingLead.id, { status });
+      } catch (error) {
+        console.error("Error updating lead status:", error);
+      }
+    }
+
+    setDraggingLead(null);
+    setDragOverStatus(null);
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
