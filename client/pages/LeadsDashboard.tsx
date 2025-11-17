@@ -321,35 +321,35 @@ export default function LeadsDashboard() {
                           }`}
                         >
                           <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-base font-semibold text-slate-900 truncate">
-                              {lead.name}
-                            </h3>
-                            <span
-                              className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0 ${STATUS_COLORS[status]}`}
-                            >
-                              {status}
-                            </span>
-                          </div>
+                            <div className="flex items-center gap-3 mb-2">
+                              <h3 className="text-base font-semibold text-slate-900 truncate">
+                                {lead.name}
+                              </h3>
+                              <span
+                                className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0 ${STATUS_COLORS[status]}`}
+                              >
+                                {status}
+                              </span>
+                            </div>
 
-                          <div className="grid grid-cols-2 gap-3 text-sm">
-                            <div>
-                              <p className="text-slate-600 font-medium">
-                                Company
-                              </p>
-                              <p className="text-slate-900">
-                                {lead.company || "N/A"}
-                              </p>
+                            <div className="grid grid-cols-2 gap-3 text-sm">
+                              <div>
+                                <p className="text-slate-600 font-medium">
+                                  Company
+                                </p>
+                                <p className="text-slate-900">
+                                  {lead.company || "N/A"}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-slate-600 font-medium">
+                                  Assigned To
+                                </p>
+                                <p className="text-slate-900">
+                                  {getSalespersonName(lead.assignedTo)}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-slate-600 font-medium">
-                                Assigned To
-                              </p>
-                              <p className="text-slate-900">
-                                {getSalespersonName(lead.assignedTo)}
-                              </p>
-                            </div>
-                          </div>
                           </div>
                         </button>
                       ))}
