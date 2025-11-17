@@ -15,9 +15,11 @@ This document summarizes all changes made to fix the three issues you requested:
 ## 📋 Files Modified
 
 ### Database
+
 - **Created**: `supabase/migrations/add_soft_delete.sql` - Migration script
 
 ### Backend/Library
+
 - **Modified**: `client/lib/supabase-db.ts`
   - Updated `getLeads()` to filter `is_deleted = false`
   - Updated `getSalespersons()` to filter `is_deleted = false`
@@ -26,11 +28,13 @@ This document summarizes all changes made to fix the three issues you requested:
   - Updated default status from "Not lifted" to "No Stage"
 
 ### Frontend - State Management
+
 - **Modified**: `client/hooks/useCRMStore.ts`
   - Updated `LeadStatus` type with new status options
   - Added `DEFAULT_LEAD_STATUS` constant
 
 ### Frontend - Pages
+
 - **Modified**: `client/pages/Leads.tsx`
   - Updated `LEAD_STATUSES` array with new options
   - Updated `STATUS_COLORS` mapping for new statuses
@@ -38,9 +42,9 @@ This document summarizes all changes made to fix the three issues you requested:
   - Updated status dropdown components
 
 ### Frontend - Components
+
 - **Modified**: `client/components/LeadDetailModal.tsx`
   - Updated `LEAD_STATUSES` array with new options
-  
 - **Modified**: `client/components/RemindersPanel.tsx`
   - Updated status color mapping
   - Updated default status displays
@@ -50,12 +54,14 @@ This document summarizes all changes made to fix the three issues you requested:
 ## 🔄 How Soft Deletes Work
 
 ### Before (Hard Delete)
+
 ```
 User deletes lead → Permanently removed from Supabase
 → Data lost forever
 ```
 
 ### After (Soft Delete)
+
 ```
 User deletes lead → Record marked with is_deleted = true
 → Hidden from UI but preserved in database
@@ -64,6 +70,7 @@ User deletes lead → Record marked with is_deleted = true
 ```
 
 ### Technical Implementation
+
 - When delete is triggered, a SQL UPDATE sets `is_deleted = true`
 - Query filters automatically exclude records where `is_deleted = true`
 - Data remains in Supabase for auditing and recovery
@@ -73,16 +80,16 @@ User deletes lead → Record marked with is_deleted = true
 
 ## 📊 New Status Options
 
-| Old Status | New Status |
-|---|---|
-| "Not lifted" | "No Stage" |
-| "Not connected" | "Appointment Schedule" |
-| "Voice Message" | "Presentation Done" |
-| "Quotation sent" | "Proposal" |
-| "Site visit" | "Negotiation" |
-| "Advance payment" | "Evaluation" |
-| "Lead finished" | "Result" |
-| "Contacted" | _(removed)_ |
+| Old Status        | New Status             |
+| ----------------- | ---------------------- |
+| "Not lifted"      | "No Stage"             |
+| "Not connected"   | "Appointment Schedule" |
+| "Voice Message"   | "Presentation Done"    |
+| "Quotation sent"  | "Proposal"             |
+| "Site visit"      | "Negotiation"          |
+| "Advance payment" | "Evaluation"           |
+| "Lead finished"   | "Result"               |
+| "Contacted"       | _(removed)_            |
 
 ---
 
@@ -121,6 +128,7 @@ CREATE INDEX IF NOT EXISTS idx_salespersons_is_deleted ON salespersons(is_delete
 After running the migration, test these features:
 
 ### Test 1: Soft Delete
+
 - [ ] Create a new lead
 - [ ] Delete the lead
 - [ ] Verify it disappears from the UI
@@ -128,12 +136,14 @@ After running the migration, test these features:
 - [ ] Verify record exists with `is_deleted = true`
 
 ### Test 2: Page Refresh
+
 - [ ] Create a new lead with status "Appointment Schedule"
 - [ ] Refresh the page (F5)
 - [ ] Lead should still be visible (not "not found")
 - [ ] Status should be preserved
 
 ### Test 3: New Status Options
+
 - [ ] Create a lead
 - [ ] Click the Status dropdown
 - [ ] Verify you see the new status options:
@@ -146,6 +156,7 @@ After running the migration, test these features:
   - Result
 
 ### Test 4: Salesperson Deletion
+
 - [ ] Create a salesperson
 - [ ] Delete the salesperson
 - [ ] Verify they disappear from the list
@@ -180,6 +191,7 @@ WHERE table_name = 'salespersons' AND column_name = 'is_deleted';
 ## 📝 Documentation
 
 See also:
+
 - `MIGRATION_SETUP.md` - Detailed migration guide with troubleshooting
 - `supabase/migrations/add_soft_delete.sql` - SQL migration file
 
