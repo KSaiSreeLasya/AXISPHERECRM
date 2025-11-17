@@ -173,7 +173,16 @@ export default function LeadsDashboard() {
         {/* Leads Display */}
         {selectedStatus ? (
           // Filtered view for selected status
-          <div className="bg-white rounded-lg border border-slate-200 p-6">
+          <div
+            className={`bg-white rounded-lg border-2 p-6 transition-all ${
+              dragOverStatus === selectedStatus
+                ? "border-blue-400 bg-blue-50 shadow-md"
+                : "border-slate-200"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={() => handleDrop(selectedStatus)}
+          >
             <div className="mb-4 flex items-center gap-3">
               <h2 className="text-2xl font-semibold text-slate-900">
                 {selectedStatus}
@@ -195,7 +204,14 @@ export default function LeadsDashboard() {
                     <button
                       key={lead.id}
                       onClick={() => setSelectedLead(lead)}
-                      className="text-left flex items-start justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
+                      draggable
+                      onDragStart={() => handleDragStart(lead)}
+                      onDragEnd={handleDragEnd}
+                      className={`text-left flex items-start justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all cursor-grab active:cursor-grabbing ${
+                        draggingLead?.id === lead.id
+                          ? "opacity-50"
+                          : "opacity-100"
+                      }`}
                     >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
