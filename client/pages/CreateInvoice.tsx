@@ -118,14 +118,14 @@ export default function CreateInvoice() {
         fullName: formData.fullName,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
-        companyName: formData.companyName,
+        companyName: formData.companyName || "",
         packageId: selectedPackage.id,
         packageName: selectedPackage.name,
         packagePrice: selectedPackage.price,
         scope,
         paidAmount: formData.paidAmount,
         additionalNotes: formData.additionalNotes,
-        taxPercentage: 18,
+        taxPercentage: formData.taxPercentage,
       });
 
       toast({
