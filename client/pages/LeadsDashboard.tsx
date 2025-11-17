@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { MainLayout } from "@/components/Layout";
 import { Lead, LeadStatus, useCRMStore } from "@/hooks/useCRMStore";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { LeadDetailModal } from "@/components/LeadDetailModal";
 import { formatDateOnlyIST } from "@/lib/formatDateIST";
 
 const LEAD_STATUSES: LeadStatus[] = [
@@ -23,8 +25,20 @@ const STATUS_COLORS: Record<LeadStatus, string> = {
   Result: "bg-green-100 text-green-800",
 };
 
+const STATUS_BG_COLORS: Record<LeadStatus, string> = {
+  "No Stage": "bg-gray-50 border-gray-200 hover:border-gray-300",
+  "Appointment Schedule": "bg-blue-50 border-blue-200 hover:border-blue-300",
+  "Presentation Done": "bg-purple-50 border-purple-200 hover:border-purple-300",
+  Proposal: "bg-yellow-50 border-yellow-200 hover:border-yellow-300",
+  Negotiation: "bg-orange-50 border-orange-200 hover:border-orange-300",
+  Evaluation: "bg-amber-50 border-amber-200 hover:border-amber-300",
+  Result: "bg-green-50 border-green-200 hover:border-green-300",
+};
+
 export default function LeadsDashboard() {
-  const { leads, salespersons, isLoading } = useCRMStore();
+  const { leads, salespersons, isLoading, updateLead } = useCRMStore();
+  const [selectedStatus, setSelectedStatus] = useState<LeadStatus | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   if (isLoading) {
     return (
