@@ -157,22 +157,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (email: string, password: string, name: string) => {
     try {
-      // Step 1: Create auth user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      // Step 1: Create auth user using server endpoint
+      let authUserId: string;
+      try {
+        const response = await fetch("/api/auth/sign-up", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
 
-      if (authError) {
-        console.error("Auth sign up error:", authError);
-        throw new Error(authError.message || "Failed to create account");
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ error: "Failed to create account" }));
+          throw new Error(errorData.error || "Failed to create account");
+        }
+
+        const authData = await response.json();
+
+        if (!authData.user) {
+          throw new Error("No user returned from signup");
+        }
+
+        authUserId = authData.user.id;
+        console.log("Auth user created:", authUserId);
+      } catch (authErr) {
+        console.error("Auth signup error:", authErr);
+        throw new Error(
+          `Authentication failed: ${authErr instanceof Error ? authErr.message : "Unknown error"}`,
+        );
       }
-
-      if (!authData.user) {
-        throw new Error("No user returned from signup");
-      }
-
-      console.log("Auth user created:", authData.user.id);
 
       // Step 2: Create salesperson record
       try {
@@ -180,7 +197,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .from("salespersons")
           .insert([
             {
-              auth_id: authData.user.id,
+              auth_id: authUserId,
               email,
               name,
             },
