@@ -3,11 +3,19 @@ import { MainLayout } from "@/components/Layout";
 import { Salesperson, useCRMStore } from "@/hooks/useCRMStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, Edit2, Plus, X, Loader2, LogOut } from "lucide-react";
+import {
+  Trash2,
+  Edit2,
+  Plus,
+  X,
+  Loader2,
+  LogOut,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
 import { formatDateOnlyIST } from "@/lib/formatDateIST";
 
 export default function Admin() {
@@ -33,6 +41,8 @@ export default function Admin() {
   });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Check if user is admin
   if (!user || user.role !== "admin") {
@@ -112,19 +122,26 @@ export default function Admin() {
         // Create new salesperson with auth
         let authUserId: string | undefined;
         try {
-          const { data: authData, error: authError } =
-            await supabase.auth.signUp({
+          const response = await fetch("/api/auth/sign-up", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
               email: formData.email,
               password,
-            });
+            }),
+          });
 
-          if (authError) {
-            const errorMessage =
-              authError.message || authError.code || "Failed to create account";
+          if (!response.ok) {
+            const errorData = await response.json();
+            const errorMessage = errorData.error || "Failed to create account";
             throw new Error(errorMessage);
           }
 
-          if (!authData.user) {
+          const authData = await response.json();
+
+          if (!authData?.user) {
             throw new Error("No user returned from signup");
           }
 
@@ -334,25 +351,53 @@ export default function Admin() {
                     <label className="block text-sm font-medium text-slate-700 mb-1">
                       Password *
                     </label>
-                    <Input
-                      type="password"
-                      placeholder="Enter password (min 6 characters)"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full"
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter password (min 6 characters)"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">
                       Confirm Password *
                     </label>
-                    <Input
-                      type="password"
-                      placeholder="Confirm password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full"
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

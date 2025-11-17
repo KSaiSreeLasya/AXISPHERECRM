@@ -150,6 +150,9 @@ export function useCRMStore() {
       setSalespersons((prevSalespersons) =>
         prevSalespersons.filter((sp) => sp.id !== id),
       );
+      setLeads((prevLeads) =>
+        prevLeads.filter((lead) => lead.assignedTo !== id),
+      );
     } catch (error) {
       console.error("Error deleting salesperson:", error);
       throw error;

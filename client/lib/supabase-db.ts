@@ -47,7 +47,6 @@ export async function getLeads(): Promise<Lead[]> {
     const { data, error } = await supabase
       .from("leads")
       .select("*")
-      .eq("is_deleted", false)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -198,10 +197,7 @@ export async function updateLead(id: string, updates: Partial<Lead>) {
 }
 
 export async function deleteLead(id: string) {
-  const { error } = await supabase
-    .from("leads")
-    .update({ is_deleted: true })
-    .eq("id", id);
+  const { error } = await supabase.from("leads").delete().eq("id", id);
 
   if (error) {
     console.error("Error deleting lead:", error);
@@ -215,7 +211,6 @@ export async function getSalespersons(): Promise<Salesperson[]> {
     const { data, error } = await supabase
       .from("salespersons")
       .select("*")
-      .eq("is_deleted", false)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -309,13 +304,30 @@ export async function updateSalesperson(
 }
 
 export async function deleteSalesperson(id: string) {
-  const { error } = await supabase
-    .from("salespersons")
-    .update({ is_deleted: true })
-    .eq("id", id);
+  try {
+    // First, delete all leads assigned to this salesperson
+    const { error: leadsError } = await supabase
+      .from("leads")
+      .delete()
+      .eq("assigned_to", id);
 
-  if (error) {
-    console.error("Error deleting salesperson:", error);
+    if (leadsError) {
+      console.error("Error deleting leads for salesperson:", leadsError);
+      throw leadsError;
+    }
+
+    // Then delete the salesperson
+    const { error: spError } = await supabase
+      .from("salespersons")
+      .delete()
+      .eq("id", id);
+
+    if (spError) {
+      console.error("Error deleting salesperson:", spError);
+      throw spError;
+    }
+  } catch (error) {
+    console.error("Error in deleteSalesperson:", error);
     throw error;
   }
 }
