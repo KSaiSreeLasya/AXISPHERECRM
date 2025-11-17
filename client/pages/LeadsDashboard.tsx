@@ -93,9 +93,10 @@ export default function LeadsDashboard() {
     setDragOverStatus(null);
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent, status: LeadStatus) => {
     e.preventDefault();
-    e.currentTarget.style.opacity = "1";
+    e.stopPropagation();
+    setDragOverStatus(status);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
