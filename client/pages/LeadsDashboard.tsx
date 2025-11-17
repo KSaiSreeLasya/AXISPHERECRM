@@ -1,0 +1,176 @@
+import { MainLayout } from "@/components/Layout";
+import { Lead, LeadStatus, useCRMStore } from "@/hooks/useCRMStore";
+import { Loader2 } from "lucide-react";
+import { formatDateOnlyIST } from "@/lib/formatDateIST";
+
+const LEAD_STATUSES: LeadStatus[] = [
+  "No Stage",
+  "Appointment Schedule",
+  "Presentation Done",
+  "Proposal",
+  "Negotiation",
+  "Evaluation",
+  "Result",
+];
+
+const STATUS_COLORS: Record<LeadStatus, string> = {
+  "No Stage": "bg-gray-100 text-gray-800",
+  "Appointment Schedule": "bg-blue-100 text-blue-800",
+  "Presentation Done": "bg-purple-100 text-purple-800",
+  Proposal: "bg-yellow-100 text-yellow-800",
+  Negotiation: "bg-orange-100 text-orange-800",
+  Evaluation: "bg-amber-100 text-amber-800",
+  Result: "bg-green-100 text-green-800",
+};
+
+export default function LeadsDashboard() {
+  const { leads, salespersons, isLoading } = useCRMStore();
+
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-slate-600">Loading dashboard...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  const leadsGroupedByStatus: Record<LeadStatus, Lead[]> = {
+    "No Stage": [],
+    "Appointment Schedule": [],
+    "Presentation Done": [],
+    Proposal: [],
+    Negotiation: [],
+    Evaluation: [],
+    Result: [],
+  };
+
+  leads.forEach((lead) => {
+    const status = (lead.status || "No Stage") as LeadStatus;
+    leadsGroupedByStatus[status].push(lead);
+  });
+
+  const getSalespersonName = (assignedTo?: string) => {
+    if (!assignedTo) return "Unassigned";
+    const salesperson = salespersons.find((sp) => sp.id === assignedTo);
+    return salesperson?.name || "Unknown";
+  };
+
+  return (
+    <MainLayout>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Leads Dashboard</h1>
+          <p className="text-slate-600 mt-1">View all leads grouped by status</p>
+        </div>
+
+        <div className="space-y-6">
+          {LEAD_STATUSES.map((status) => {
+            const statusLeads = leadsGroupedByStatus[status];
+            const count = statusLeads.length;
+
+            return (
+              <div key={status} className="bg-white rounded-lg border border-slate-200 p-6">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-xl font-semibold text-slate-900">
+                      {status}
+                    </h2>
+                    <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm font-medium">
+                      {count}
+                    </span>
+                  </div>
+                </div>
+
+                {count === 0 ? (
+                  <div className="py-12 text-center">
+                    <p className="text-slate-500">No leads in this status</p>
+                  </div>
+                ) : (
+                  <div className="grid gap-3">
+                    {statusLeads.map((lead) => (
+                      <div
+                        key={lead.id}
+                        className="flex items-start justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-base font-semibold text-slate-900 truncate">
+                              {lead.name}
+                            </h3>
+                            <span
+                              className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0 ${STATUS_COLORS[status]}`}
+                            >
+                              {status}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 text-sm mb-2">
+                            <div>
+                              <p className="text-slate-600 font-medium">Company</p>
+                              <p className="text-slate-900">{lead.company || "N/A"}</p>
+                            </div>
+                            <div>
+                              <p className="text-slate-600 font-medium">Position</p>
+                              <p className="text-slate-900">
+                                {lead.jobTitle || "N/A"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 text-sm mb-2">
+                            {lead.email && (
+                              <div>
+                                <p className="text-slate-600 font-medium">Email</p>
+                                <a
+                                  href={`mailto:${lead.email}`}
+                                  className="text-blue-600 hover:text-blue-700 break-all"
+                                >
+                                  {lead.email}
+                                </a>
+                              </div>
+                            )}
+                            {lead.phoneNumbers && lead.phoneNumbers.length > 0 && (
+                              <div>
+                                <p className="text-slate-600 font-medium">Phone</p>
+                                <a
+                                  href={`tel:${lead.phoneNumbers[0]}`}
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  {lead.phoneNumbers[0]}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <p className="text-slate-600 font-medium">Assigned To</p>
+                              <p className="text-slate-900">
+                                {getSalespersonName(lead.assignedTo)}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-slate-600 font-medium">Created</p>
+                              <p className="text-slate-900">
+                                {formatDateOnlyIST(lead.createdAt)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
