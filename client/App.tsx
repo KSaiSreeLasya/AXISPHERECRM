@@ -73,6 +73,14 @@ const App = () => (
               }
             />
             <Route
+              path="/leads-dashboard"
+              element={
+                <ProtectedRoute>
+                  <LeadsDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/salespersons"
               element={
                 <ProtectedRoute>
