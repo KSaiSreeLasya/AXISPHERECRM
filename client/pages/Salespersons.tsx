@@ -255,21 +255,26 @@ export default function Salespersons() {
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditSalesperson(salesperson)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteSalesperson(salesperson.id)}
-                        className="text-red-600 hover:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {(user?.role === "admin" ||
+                        user?.id === salesperson.id) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditSalesperson(salesperson)}
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                      {user?.role === "admin" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteSalesperson(salesperson.id)}
+                          className="text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
 
