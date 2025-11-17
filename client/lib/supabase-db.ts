@@ -198,7 +198,10 @@ export async function updateLead(id: string, updates: Partial<Lead>) {
 }
 
 export async function deleteLead(id: string) {
-  const { error } = await supabase.from("leads").delete().eq("id", id);
+  const { error } = await supabase
+    .from("leads")
+    .update({ is_deleted: true })
+    .eq("id", id);
 
   if (error) {
     console.error("Error deleting lead:", error);
