@@ -164,7 +164,7 @@ export function RemindersPanel() {
                         <span
                           className={`text-xs font-medium px-2 py-1 rounded whitespace-nowrap ${getStatusColor(reminder.status)}`}
                         >
-                          {reminder.status || "Not lifted"}
+                          {reminder.status || "No Stage"}
                         </span>
                       </div>
                       <p className="text-sm text-slate-600">
