@@ -216,6 +216,8 @@ export default function Admin() {
     });
     setPassword("");
     setConfirmPassword("");
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
   const handleLogout = async () => {
