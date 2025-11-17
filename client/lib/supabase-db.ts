@@ -47,6 +47,7 @@ export async function getLeads(): Promise<Lead[]> {
     const { data, error } = await supabase
       .from("leads")
       .select("*")
+      .eq("is_deleted", false)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -58,7 +59,6 @@ export async function getLeads(): Promise<Lead[]> {
         "Details:",
         error.details,
       );
-      // Return empty array instead of throwing to allow graceful degradation
       return [];
     }
 
@@ -78,7 +78,7 @@ export async function getLeads(): Promise<Lead[]> {
       companyIndustries: item.company_industries || [],
       companyKeywords: item.company_keywords || [],
       assignedTo: item.assigned_to,
-      status: item.status || "Not lifted",
+      status: item.status || "No Stage",
       note: item.note,
       nextReminderDate: item.next_reminder_date,
       createdAt: item.created_at,
@@ -110,6 +110,8 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
     }
     if (lead.status) {
       insertData.status = lead.status;
+    } else {
+      insertData.status = "No Stage";
     }
     if (lead.note) {
       insertData.note = lead.note;
@@ -148,7 +150,7 @@ export async function addLead(lead: Omit<Lead, "id" | "createdAt">) {
       companyIndustries: data.company_industries || [],
       companyKeywords: data.company_keywords || [],
       assignedTo: data.assigned_to,
-      status: data.status || "Not lifted",
+      status: data.status || "No Stage",
       note: data.note,
       nextReminderDate: data.next_reminder_date,
       createdAt: data.created_at,
@@ -196,7 +198,10 @@ export async function updateLead(id: string, updates: Partial<Lead>) {
 }
 
 export async function deleteLead(id: string) {
-  const { error } = await supabase.from("leads").delete().eq("id", id);
+  const { error } = await supabase
+    .from("leads")
+    .update({ is_deleted: true })
+    .eq("id", id);
 
   if (error) {
     console.error("Error deleting lead:", error);
@@ -210,6 +215,7 @@ export async function getSalespersons(): Promise<Salesperson[]> {
     const { data, error } = await supabase
       .from("salespersons")
       .select("*")
+      .eq("is_deleted", false)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -221,7 +227,6 @@ export async function getSalespersons(): Promise<Salesperson[]> {
         "Details:",
         error.details,
       );
-      // Return empty array instead of throwing to allow graceful degradation
       return [];
     }
 
@@ -304,7 +309,10 @@ export async function updateSalesperson(
 }
 
 export async function deleteSalesperson(id: string) {
-  const { error } = await supabase.from("salespersons").delete().eq("id", id);
+  const { error } = await supabase
+    .from("salespersons")
+    .update({ is_deleted: true })
+    .eq("id", id);
 
   if (error) {
     console.error("Error deleting salesperson:", error);

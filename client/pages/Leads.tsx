@@ -16,25 +16,23 @@ import { LeadDetailModal } from "@/components/LeadDetailModal";
 import { formatDateOnlyIST } from "@/lib/formatDateIST";
 
 const LEAD_STATUSES: LeadStatus[] = [
-  "Not lifted",
-  "Not connected",
-  "Voice Message",
-  "Quotation sent",
-  "Site visit",
-  "Advance payment",
-  "Lead finished",
-  "Contacted",
+  "No Stage",
+  "Appointment Schedule",
+  "Presentation Done",
+  "Proposal",
+  "Negotiation",
+  "Evaluation",
+  "Result",
 ];
 
 const STATUS_COLORS: Record<LeadStatus, string> = {
-  "Not lifted": "bg-gray-100 text-gray-800",
-  "Not connected": "bg-red-100 text-red-800",
-  "Voice Message": "bg-blue-100 text-blue-800",
-  "Quotation sent": "bg-yellow-100 text-yellow-800",
-  "Site visit": "bg-purple-100 text-purple-800",
-  "Advance payment": "bg-orange-100 text-orange-800",
-  "Lead finished": "bg-green-100 text-green-800",
-  Contacted: "bg-cyan-100 text-cyan-800",
+  "No Stage": "bg-gray-100 text-gray-800",
+  "Appointment Schedule": "bg-blue-100 text-blue-800",
+  "Presentation Done": "bg-purple-100 text-purple-800",
+  Proposal: "bg-yellow-100 text-yellow-800",
+  Negotiation: "bg-orange-100 text-orange-800",
+  Evaluation: "bg-amber-100 text-amber-800",
+  Result: "bg-green-100 text-green-800",
 };
 
 export default function Leads() {
@@ -61,7 +59,7 @@ export default function Leads() {
     companyEmployees: "",
     companyIndustries: [""],
     companyKeywords: [""],
-    status: "Not lifted",
+    status: "No Stage",
     note: "",
     nextReminderDate: "",
     assignedTo: user?.role === "salesperson" ? user?.id : undefined,
@@ -112,7 +110,7 @@ export default function Leads() {
         companyEmployees: "",
         companyIndustries: [""],
         companyKeywords: [""],
-        status: "Not lifted",
+        status: "No Stage",
         note: "",
         nextReminderDate: "",
         assignedTo: user?.role === "salesperson" ? user?.id : undefined,
@@ -287,7 +285,7 @@ export default function Leads() {
       companyEmployees: "",
       companyIndustries: [""],
       companyKeywords: [""],
-      status: "Not lifted",
+      status: "No Stage",
       note: "",
       nextReminderDate: "",
       assignedTo: user?.role === "salesperson" ? user?.id : undefined,
@@ -477,7 +475,7 @@ export default function Leads() {
                     Status
                   </label>
                   <select
-                    value={formData.status || "Not lifted"}
+                    value={formData.status || "No Stage"}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -867,7 +865,7 @@ export default function Leads() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <select
-                          value={lead.status || "Not lifted"}
+                          value={lead.status || "No Stage"}
                           onChange={(e) =>
                             handleStatusChange(
                               lead.id,
@@ -875,7 +873,7 @@ export default function Leads() {
                             )
                           }
                           className={`px-3 py-1 rounded text-sm font-medium border-0 cursor-pointer ${
-                            STATUS_COLORS[lead.status || "Not lifted"]
+                            STATUS_COLORS[lead.status || "No Stage"]
                           }`}
                         >
                           {LEAD_STATUSES.map((status) => (

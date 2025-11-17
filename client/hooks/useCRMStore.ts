@@ -11,14 +11,13 @@ import {
 } from "@/lib/supabase-db";
 
 export type LeadStatus =
-  | "Not lifted"
-  | "Not connected"
-  | "Voice Message"
-  | "Quotation sent"
-  | "Site visit"
-  | "Advance payment"
-  | "Lead finished"
-  | "Contacted";
+  | "No Stage"
+  | "Appointment Schedule"
+  | "Presentation Done"
+  | "Proposal"
+  | "Negotiation"
+  | "Evaluation"
+  | "Result";
 
 export interface Lead {
   id: string;
@@ -47,6 +46,8 @@ export interface Salesperson {
   phoneNumber: string;
   createdAt: string;
 }
+
+const DEFAULT_LEAD_STATUS: LeadStatus = "No Stage";
 
 export function useCRMStore() {
   const [leads, setLeads] = useState<Lead[]>([]);
