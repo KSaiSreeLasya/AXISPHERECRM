@@ -51,7 +51,11 @@ export default function LeadsDashboard() {
 
   leads.forEach((lead) => {
     const status = (lead.status || "No Stage") as LeadStatus;
-    leadsGroupedByStatus[status].push(lead);
+    if (leadsGroupedByStatus[status]) {
+      leadsGroupedByStatus[status].push(lead);
+    } else {
+      leadsGroupedByStatus["No Stage"].push(lead);
+    }
   });
 
   const getSalespersonName = (assignedTo?: string) => {
