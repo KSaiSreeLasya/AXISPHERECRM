@@ -180,8 +180,8 @@ export default function Salespersons() {
           )}
         </div>
 
-        {/* Form */}
-        {showForm && (
+        {/* Form - Only show for admins */}
+        {showForm && canAddSalesperson() && (
           <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <button
