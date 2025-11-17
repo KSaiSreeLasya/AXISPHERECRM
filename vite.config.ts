@@ -12,7 +12,6 @@ export default defineConfig(({ mode }) => ({
       allow: [".", "./client", "./shared"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
-    middlewareMode: true,
   },
   build: {
     outDir: "dist/spa",
@@ -33,11 +32,11 @@ function expressPlugin(): Plugin {
     configureServer(server) {
       const app = createServer();
 
-      // Return a handler function that processes before Vite's built-in middlewares
-      return () => {
-        server.middlewares.use("/api", app); // Only mount Express for /api routes
+      // Add Express app as middleware to Vite dev server
+      server.middlewares.use(app);
 
-        // Add a catch-all middleware for SPA routing that serves index.html
+      // Return middleware to handle SPA routing
+      return () => {
         server.middlewares.use((req, res, next) => {
           // If the request is for a non-existent file and doesn't start with /api,
           // serve index.html to let React Router handle it
