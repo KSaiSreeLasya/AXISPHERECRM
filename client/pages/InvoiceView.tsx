@@ -338,7 +338,7 @@ export default function InvoiceView() {
   <div>
     <img src={companyInfo.logo} alt="Axisphere" className="h-12 mb-2" />
 
-    <h1 className="text-3xl font-bold text-black mb-1">
+    <h1 className="text-2xl font-bold text-black mb-1">
       Axisphere Media Worx LLP
     </h1>
 
@@ -477,7 +477,7 @@ export default function InvoiceView() {
           className="h-12 mb-2"
         />
 
-        <h1 className="text-3xl font-bold text-black mb-1">
+        <h1 className="text-2xl font-bold text-black mb-1">
           Axisphere Media Worx LLP
         </h1>
 
