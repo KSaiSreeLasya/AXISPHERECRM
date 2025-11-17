@@ -287,23 +287,38 @@ export default function Salespersons() {
                       <p className="text-xs text-slate-500 mt-1">
                         ID: {salesperson.id}
                       </p>
+                      {user?.role === "salesperson" && user.id === salesperson.id && (
+                        <p className="text-xs text-blue-600 font-medium mt-1">
+                          (Your Profile)
+                        </p>
+                      )}
                     </div>
                     <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditSalesperson(salesperson)}
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteSalesperson(salesperson.id)}
-                        className="text-red-600 hover:bg-red-50"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                      {canEditSalesperson(salesperson) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEditSalesperson(salesperson)}
+                          title={
+                            user?.role === "salesperson"
+                              ? "Edit your profile"
+                              : "Edit salesperson"
+                          }
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                      {canDeleteSalesperson(salesperson) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteSalesperson(salesperson.id)}
+                          className="text-red-600 hover:bg-red-50"
+                          title="Delete salesperson"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
 
