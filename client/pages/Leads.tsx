@@ -865,7 +865,7 @@ export default function Leads() {
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <select
-                          value={lead.status || "Not lifted"}
+                          value={lead.status || "No Stage"}
                           onChange={(e) =>
                             handleStatusChange(
                               lead.id,
@@ -873,7 +873,7 @@ export default function Leads() {
                             )
                           }
                           className={`px-3 py-1 rounded text-sm font-medium border-0 cursor-pointer ${
-                            STATUS_COLORS[lead.status || "Not lifted"]
+                            STATUS_COLORS[lead.status || "No Stage"]
                           }`}
                         >
                           {LEAD_STATUSES.map((status) => (
