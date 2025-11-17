@@ -156,15 +156,94 @@ export default function LeadsDashboard() {
         </div>
 
         {/* Leads Display */}
-        <div className="space-y-6">
-          {LEAD_STATUSES.map((status) => {
-            const statusLeads = leadsGroupedByStatus[status];
-            const count = statusLeads.length;
+        {selectedStatus ? (
+          // Filtered view for selected status
+          <div className="bg-white rounded-lg border border-slate-200 p-6">
+            <div className="mb-4 flex items-center gap-3">
+              <h2 className="text-2xl font-semibold text-slate-900">
+                {selectedStatus}
+              </h2>
+              <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm font-medium">
+                {displayLeads.length}
+              </span>
+            </div>
 
-            return (
-              <div key={status} className="bg-white rounded-lg border border-slate-200 p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+            {displayLeads.length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="text-slate-500">No leads in this status</p>
+              </div>
+            ) : (
+              <div className="grid gap-3">
+                {displayLeads.map((lead) => {
+                  const status = (lead.status ||
+                    "No Stage") as LeadStatus;
+                  return (
+                    <button
+                      key={lead.id}
+                      onClick={() => setSelectedLead(lead)}
+                      className="text-left flex items-start justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="text-base font-semibold text-slate-900 truncate">
+                            {lead.name}
+                          </h3>
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0 ${STATUS_COLORS[status]}`}
+                          >
+                            {status}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 text-sm mb-2">
+                          <div>
+                            <p className="text-slate-600 font-medium">Company</p>
+                            <p className="text-slate-900">{lead.company || "N/A"}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-600 font-medium">Position</p>
+                            <p className="text-slate-900">
+                              {lead.jobTitle || "N/A"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-slate-600 font-medium">Email</p>
+                            <p className="text-slate-900">
+                              {lead.email || "N/A"}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-slate-600 font-medium">Assigned To</p>
+                            <p className="text-slate-900">
+                              {getSalespersonName(lead.assignedTo)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          // Overview with all statuses
+          <div className="space-y-6">
+            {LEAD_STATUSES.map((status) => {
+              const statusLeads = leadsGroupedByStatus[status];
+              const count = statusLeads.length;
+
+              if (count === 0) return null;
+
+              return (
+                <div
+                  key={status}
+                  className="bg-white rounded-lg border border-slate-200 p-6"
+                >
+                  <div className="mb-4 flex items-center gap-3">
                     <h2 className="text-xl font-semibold text-slate-900">
                       {status}
                     </h2>
@@ -172,18 +251,13 @@ export default function LeadsDashboard() {
                       {count}
                     </span>
                   </div>
-                </div>
 
-                {count === 0 ? (
-                  <div className="py-12 text-center">
-                    <p className="text-slate-500">No leads in this status</p>
-                  </div>
-                ) : (
                   <div className="grid gap-3">
-                    {statusLeads.map((lead) => (
-                      <div
+                    {statusLeads.slice(0, 3).map((lead) => (
+                      <button
                         key={lead.id}
-                        className="flex items-start justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors"
+                        onClick={() => setSelectedLead(lead)}
+                        className="text-left flex items-start justify-between p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-2">
@@ -197,68 +271,48 @@ export default function LeadsDashboard() {
                             </span>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-3 text-sm mb-2">
-                            <div>
-                              <p className="text-slate-600 font-medium">Company</p>
-                              <p className="text-slate-900">{lead.company || "N/A"}</p>
-                            </div>
-                            <div>
-                              <p className="text-slate-600 font-medium">Position</p>
-                              <p className="text-slate-900">
-                                {lead.jobTitle || "N/A"}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3 text-sm mb-2">
-                            {lead.email && (
-                              <div>
-                                <p className="text-slate-600 font-medium">Email</p>
-                                <a
-                                  href={`mailto:${lead.email}`}
-                                  className="text-blue-600 hover:text-blue-700 break-all"
-                                >
-                                  {lead.email}
-                                </a>
-                              </div>
-                            )}
-                            {lead.phoneNumbers && lead.phoneNumbers.length > 0 && (
-                              <div>
-                                <p className="text-slate-600 font-medium">Phone</p>
-                                <a
-                                  href={`tel:${lead.phoneNumbers[0]}`}
-                                  className="text-blue-600 hover:text-blue-700"
-                                >
-                                  {lead.phoneNumbers[0]}
-                                </a>
-                              </div>
-                            )}
-                          </div>
-
                           <div className="grid grid-cols-2 gap-3 text-sm">
                             <div>
-                              <p className="text-slate-600 font-medium">Assigned To</p>
+                              <p className="text-slate-600 font-medium">Company</p>
+                              <p className="text-slate-900">
+                                {lead.company || "N/A"}
+                              </p>
+                            </div>
+                            <div>
+                              <p className="text-slate-600 font-medium">
+                                Assigned To
+                              </p>
                               <p className="text-slate-900">
                                 {getSalespersonName(lead.assignedTo)}
                               </p>
                             </div>
-                            <div>
-                              <p className="text-slate-600 font-medium">Created</p>
-                              <p className="text-slate-900">
-                                {formatDateOnlyIST(lead.createdAt)}
-                              </p>
-                            </div>
                           </div>
                         </div>
-                      </div>
+                      </button>
                     ))}
+                    {count > 3 && (
+                      <button
+                        onClick={() => setSelectedStatus(status)}
+                        className="py-2 px-4 text-center text-blue-600 hover:text-blue-700 font-medium text-sm"
+                      >
+                        View all {count} leads →
+                      </button>
+                    )}
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      {/* Lead Detail Modal */}
+      <LeadDetailModal
+        lead={selectedLead!}
+        isOpen={!!selectedLead}
+        onClose={() => setSelectedLead(null)}
+        onUpdate={updateLead}
+      />
     </MainLayout>
   );
 }
