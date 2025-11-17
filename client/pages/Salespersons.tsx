@@ -131,13 +131,7 @@ export default function Salespersons() {
               Manage your sales team members
             </p>
           </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {showForm ? "Cancel" : ""}
-          </Button>
+          
         </div>
 
         {/* Form */}
