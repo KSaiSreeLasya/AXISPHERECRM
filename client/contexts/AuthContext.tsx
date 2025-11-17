@@ -107,8 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (!response.ok) {
           const errorData = await response.json();
-          const errorMessage =
-            errorData.error || "Invalid email or password";
+          const errorMessage = errorData.error || "Invalid email or password";
           console.error("Auth sign in error:", errorMessage);
           throw new Error(errorMessage);
         }

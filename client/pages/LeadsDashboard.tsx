@@ -87,7 +87,9 @@ export default function LeadsDashboard() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Leads Dashboard</h1>
+            <h1 className="text-3xl font-bold text-slate-900">
+              Leads Dashboard
+            </h1>
             <p className="text-slate-600 mt-1">
               {selectedStatus
                 ? `Leads in ${selectedStatus}`
@@ -150,8 +152,7 @@ export default function LeadsDashboard() {
             ) : (
               <div className="grid gap-3">
                 {displayLeads.map((lead) => {
-                  const status = (lead.status ||
-                    "No Stage") as LeadStatus;
+                  const status = (lead.status || "No Stage") as LeadStatus;
                   return (
                     <button
                       key={lead.id}
@@ -172,11 +173,17 @@ export default function LeadsDashboard() {
 
                         <div className="grid grid-cols-2 gap-3 text-sm mb-2">
                           <div>
-                            <p className="text-slate-600 font-medium">Company</p>
-                            <p className="text-slate-900">{lead.company || "N/A"}</p>
+                            <p className="text-slate-600 font-medium">
+                              Company
+                            </p>
+                            <p className="text-slate-900">
+                              {lead.company || "N/A"}
+                            </p>
                           </div>
                           <div>
-                            <p className="text-slate-600 font-medium">Position</p>
+                            <p className="text-slate-600 font-medium">
+                              Position
+                            </p>
                             <p className="text-slate-900">
                               {lead.jobTitle || "N/A"}
                             </p>
@@ -191,7 +198,9 @@ export default function LeadsDashboard() {
                             </p>
                           </div>
                           <div>
-                            <p className="text-slate-600 font-medium">Assigned To</p>
+                            <p className="text-slate-600 font-medium">
+                              Assigned To
+                            </p>
                             <p className="text-slate-900">
                               {getSalespersonName(lead.assignedTo)}
                             </p>
@@ -248,7 +257,9 @@ export default function LeadsDashboard() {
 
                           <div className="grid grid-cols-2 gap-3 text-sm">
                             <div>
-                              <p className="text-slate-600 font-medium">Company</p>
+                              <p className="text-slate-600 font-medium">
+                                Company
+                              </p>
                               <p className="text-slate-900">
                                 {lead.company || "N/A"}
                               </p>

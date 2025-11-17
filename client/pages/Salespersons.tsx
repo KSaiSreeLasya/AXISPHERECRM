@@ -269,7 +269,9 @@ export default function Salespersons() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleDeleteSalesperson(salesperson.id)}
+                          onClick={() =>
+                            handleDeleteSalesperson(salesperson.id)
+                          }
                           className="text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="w-4 h-4" />

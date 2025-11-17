@@ -113,7 +113,6 @@ export default function Login() {
               {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
-
         </div>
       </div>
     </div>
