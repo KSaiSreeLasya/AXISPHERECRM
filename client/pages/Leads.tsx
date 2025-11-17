@@ -475,7 +475,7 @@ export default function Leads() {
                     Status
                   </label>
                   <select
-                    value={formData.status || "Not lifted"}
+                    value={formData.status || "No Stage"}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
