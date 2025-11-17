@@ -285,7 +285,7 @@ export default function LeadsDashboard() {
                       ? "border-blue-400 bg-blue-50 shadow-lg"
                       : "border-slate-200"
                   } ${count === 0 ? "opacity-60" : ""}`}
-                  onDragOver={handleDragOver}
+                  onDragOver={(e) => handleDragOver(e, status)}
                   onDragLeave={() => setDragOverStatus(null)}
                   onDrop={() => {
                     setDragOverStatus(null);
