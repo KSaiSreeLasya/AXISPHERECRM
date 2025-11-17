@@ -71,12 +71,15 @@ export default function InvoiceView() {
     try {
       // Convert image URL to base64 for PDF embedding
       const logoBase64 = await fetch(companyInfo.logo)
-        .then(res => res.blob())
-        .then(blob => new Promise<string>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(blob);
-        }))
+        .then((res) => res.blob())
+        .then(
+          (blob) =>
+            new Promise<string>((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result as string);
+              reader.readAsDataURL(blob);
+            }),
+        )
         .catch(() => companyInfo.logo); // Fallback to URL if fetch fails
 
       const element = document.createElement("div");
@@ -88,7 +91,10 @@ export default function InvoiceView() {
               <img src="${logoBase64}" alt="Axisphere" style="height: 48px; margin-bottom: 8px;" />
               <h1 style="font-size: 36px; font-weight: bold; color: #9333ea; margin-bottom: 8px;">Axisphere Invoice Bill</h1>
               <div style="font-size: 14px; color: #475569;">
-                ${companyInfo.address.split("\n").map(line => `<div>${line}</div>`).join("")}
+                ${companyInfo.address
+                  .split("\n")
+                  .map((line) => `<div>${line}</div>`)
+                  .join("")}
               </div>
             </div>
             <div style="text-align: right;">
@@ -178,23 +184,31 @@ export default function InvoiceView() {
           <div style="margin-bottom: 24px;">
             <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 16px;">${invoice?.packageName}</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-              ${invoice?.scope.map((feature) => `
+              ${invoice?.scope
+                .map(
+                  (feature) => `
                 <div style="display: flex; gap: 12px; padding: 16px; border-radius: 4px; border: 1px solid ${feature.included ? "#dcfce7" : "#e2e8f0"}; background: ${feature.included ? "#f0fdf4" : "#f8fafc"}; opacity: ${feature.included ? "1" : "0.6"};">
                   <div style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; background: ${feature.included ? "#16a34a" : "#cbd5e1"};">
                     ${feature.included ? '<svg style="width: 12px; height: 12px; color: white; fill: none; stroke: currentColor;" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ""}
                   </div>
                   <span style="font-size: 14px; color: ${feature.included ? "#1e293b" : "#64748b"}; font-weight: ${feature.included ? "500" : "400"}">${feature.name}</span>
                 </div>
-              `).join("")}
+              `,
+                )
+                .join("")}
             </div>
           </div>
 
-          ${invoice?.additionalNotes ? `
+          ${
+            invoice?.additionalNotes
+              ? `
             <div style="margin-top: 48px; padding-top: 32px; border-top: 1px solid #e2e8f0;">
               <h3 style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 16px;">Additional Notes</h3>
               <p style="color: #334155; white-space: pre-wrap;">${invoice.additionalNotes}</p>
             </div>
-          ` : ""}
+          `
+              : ""
+          }
         </div>
       `;
 
