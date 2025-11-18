@@ -155,7 +155,7 @@ export default function Salespersons() {
           <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <button
-                onClick={handleCancel}
+                onClick={closeForm}
                 className="text-slate-500 hover:text-slate-700"
               >
                 <ArrowLeft className="w-6 h-6" />
