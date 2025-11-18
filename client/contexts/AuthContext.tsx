@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
+// Add HMR handler to prevent "send was called before connect" error
+if (import.meta.hot) {
+  import.meta.hot.accept(["@/lib/supabase"], () => {
+    // Module accepted - allows hot reload without full page refresh
+  });
+}
+
 export type UserRole = "salesperson" | "admin";
 
 export interface AuthUser {
