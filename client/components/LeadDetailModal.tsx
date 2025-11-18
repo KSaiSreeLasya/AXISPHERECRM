@@ -40,6 +40,7 @@ export function LeadDetailModal({
   onClose,
   onUpdate,
 }: LeadDetailModalProps) {
+  const { salespersons } = useCRMStore();
   const [activeTab, setActiveTab] = useState("details");
   const [notes, setNotes] = useState<LeadNote[]>([]);
   const [isLoadingNotes, setIsLoadingNotes] = useState(false);
@@ -48,6 +49,8 @@ export function LeadDetailModal({
     lead.status || "",
   );
   const [isAddingNote, setIsAddingNote] = useState(false);
+  const [assignedTo, setAssignedTo] = useState<string>(lead.assignedTo || "");
+  const [isUpdatingAssignment, setIsUpdatingAssignment] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
