@@ -1,5 +1,4 @@
 import { Lead, LeadStatus } from "@/hooks/useCRMStore";
-import { TrendingUp } from "lucide-react";
 
 const LEAD_STATUSES: LeadStatus[] = [
   "No Stage",
@@ -10,6 +9,44 @@ const LEAD_STATUSES: LeadStatus[] = [
   "Evaluation",
   "Result",
 ];
+
+const STATUS_COLORS: Record<LeadStatus, { bg: string; text: string; border: string }> = {
+  "No Stage": {
+    bg: "bg-gray-50",
+    text: "text-gray-800",
+    border: "border-gray-200",
+  },
+  "Appointment Schedule": {
+    bg: "bg-blue-50",
+    text: "text-blue-800",
+    border: "border-blue-200",
+  },
+  "Presentation Done": {
+    bg: "bg-purple-50",
+    text: "text-purple-800",
+    border: "border-purple-200",
+  },
+  Proposal: {
+    bg: "bg-yellow-50",
+    text: "text-yellow-800",
+    border: "border-yellow-200",
+  },
+  Negotiation: {
+    bg: "bg-orange-50",
+    text: "text-orange-800",
+    border: "border-orange-200",
+  },
+  Evaluation: {
+    bg: "bg-amber-50",
+    text: "text-amber-800",
+    border: "border-amber-200",
+  },
+  Result: {
+    bg: "bg-green-50",
+    text: "text-green-800",
+    border: "border-green-200",
+  },
+};
 
 interface LeadsAnalyticsProps {
   leads: Lead[];
@@ -35,51 +72,24 @@ export function LeadsAnalytics({ leads }: LeadsAnalyticsProps) {
     }
   });
 
-  const totalLeads = leads.length;
-  const resultLeads = leadsGroupedByStatus["Result"].length;
-  const conversionRate =
-    totalLeads > 0 ? Math.round((resultLeads / totalLeads) * 100) : 0;
-
-  const qualifiedLeads = LEAD_STATUSES.filter(
-    (status) => status !== "No Stage",
-  ).reduce((sum, status) => sum + leadsGroupedByStatus[status].length, 0);
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <div className="text-sm font-medium text-slate-600 mb-2">
-          Total Leads
-        </div>
-        <div className="text-3xl font-bold text-slate-900">{totalLeads}</div>
-      </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+      {LEAD_STATUSES.map((status) => {
+        const count = leadsGroupedByStatus[status].length;
+        const colors = STATUS_COLORS[status];
 
-      <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <div className="text-sm font-medium text-slate-600 mb-2">
-          Qualified Leads
-        </div>
-        <div className="text-3xl font-bold text-blue-600">{qualifiedLeads}</div>
-      </div>
-
-      <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <div className="text-sm font-medium text-slate-600 mb-2">
-          Closed Deals
-        </div>
-        <div className="text-3xl font-bold text-green-600">{resultLeads}</div>
-      </div>
-
-      <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm font-medium text-slate-600 mb-2">
-              Conversion Rate
-            </div>
-            <div className="text-3xl font-bold text-slate-900">
-              {conversionRate}%
-            </div>
+        return (
+          <div
+            key={status}
+            className={`rounded-lg border-2 p-4 text-center ${colors.bg} ${colors.border}`}
+          >
+            <p className="text-xs font-medium text-slate-600 mb-1 truncate">
+              {status}
+            </p>
+            <p className={`text-3xl font-bold ${colors.text}`}>{count}</p>
           </div>
-          <TrendingUp className="w-8 h-8 text-green-500" />
-        </div>
-      </div>
+        );
+      })}
     </div>
   );
 }
