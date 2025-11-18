@@ -188,3 +188,42 @@ export const handlePasswordReset: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const handleDeleteAuthUser: RequestHandler = async (req, res) => {
+  try {
+    if (!adminSupabase) {
+      return res.status(500).json({
+        error: "Server configuration error: service role key not configured",
+        details: "SUPABASE_SERVICE_ROLE_KEY is not set",
+      });
+    }
+
+    const { authId } = req.body;
+
+    if (!authId) {
+      return res.status(400).json({
+        error: "Missing required field: authId",
+      });
+    }
+
+    const { error } = await adminSupabase.auth.admin.deleteUser(authId);
+
+    if (error) {
+      console.error("Error deleting auth user:", error);
+      return res.status(400).json({
+        error: "Failed to delete user account",
+        details: error.message,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "User account deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete auth user error:", error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Delete failed",
+    });
+  }
+};
