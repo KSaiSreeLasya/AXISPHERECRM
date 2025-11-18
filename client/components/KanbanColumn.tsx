@@ -46,7 +46,7 @@ export function KanbanColumn({
       <div className="flex-1 overflow-y-auto p-2 space-y-2">
         {leads.length === 0 ? (
           <div className="flex items-center justify-center h-32 text-center">
-            <p className="text-slate-500 text-sm">Drag to add</p>
+            <p className="text-slate-500 text-xs">Drag to add</p>
           </div>
         ) : (
           leads.map((lead) => (
