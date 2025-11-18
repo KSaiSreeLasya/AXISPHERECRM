@@ -11,8 +11,6 @@ import {
   handleAuthSignUp,
   handleAuthSignOut,
   handleAuthSession,
-  handlePasswordReset,
-  handleDeleteAuthUser,
 } from "./routes/auth";
 import { handleUpdateLead, handleDeleteSalesperson } from "./routes/leads";
 
@@ -38,8 +36,6 @@ export function createServer() {
   app.post("/api/auth/sign-up", handleAuthSignUp);
   app.post("/api/auth/sign-out", handleAuthSignOut);
   app.get("/api/auth/session", handleAuthSession);
-  app.post("/api/auth/password-reset", handlePasswordReset);
-  app.post("/api/auth/delete-user", handleDeleteAuthUser);
 
   // Debug endpoint to check API key
   app.get("/api/debug-key", (_req, res) => {

@@ -104,22 +104,7 @@ export const handleDeleteSalesperson: RequestHandler = async (req, res) => {
       });
     }
 
-    // First, get the salesperson to retrieve auth_id
-    const { data: salesperson, error: fetchError } = await adminSupabase
-      .from("salespersons")
-      .select("auth_id")
-      .eq("id", salespersonId)
-      .single();
-
-    if (fetchError) {
-      console.error("Error fetching salesperson:", fetchError);
-      return res.status(400).json({
-        error: "Failed to fetch salesperson",
-        details: fetchError.message,
-      });
-    }
-
-    // Delete all leads assigned to this salesperson
+    // First, delete all leads assigned to this salesperson
     const { error: leadsError } = await adminSupabase
       .from("leads")
       .delete()
@@ -133,7 +118,7 @@ export const handleDeleteSalesperson: RequestHandler = async (req, res) => {
       });
     }
 
-    // Delete the salesperson record
+    // Then delete the salesperson
     const { error: spError } = await adminSupabase
       .from("salespersons")
       .delete()
@@ -145,18 +130,6 @@ export const handleDeleteSalesperson: RequestHandler = async (req, res) => {
         error: "Failed to delete salesperson",
         details: spError.message,
       });
-    }
-
-    // Delete the auth user if auth_id exists
-    if (salesperson?.auth_id) {
-      const { error: authError } = await adminSupabase.auth.admin.deleteUser(
-        salesperson.auth_id,
-      );
-
-      if (authError) {
-        console.error("Warning: Failed to delete auth user:", authError);
-        // Don't fail the entire operation if auth deletion fails
-      }
     }
 
     res.json({
