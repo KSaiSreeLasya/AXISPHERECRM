@@ -3,8 +3,8 @@ import { supabase } from "@/lib/supabase";
 
 // Add HMR handler to prevent "send was called before connect" error
 if (import.meta.hot) {
-  import.meta.hot.accept(["@/lib/supabase"], () => {
-    // Module accepted - allows hot reload without full page refresh
+  import.meta.hot.accept(() => {
+    // Module accepted for HMR - prevents reload errors
   });
 }
 
