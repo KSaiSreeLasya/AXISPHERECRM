@@ -34,7 +34,7 @@ export function KanbanColumn({
     <div
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, status)}
-      className={`flex flex-col rounded-lg border-2 ${COLUMN_BG_COLORS[status]} min-h-96 max-h-[calc(100vh-300px)] overflow-hidden`}
+      className={`flex flex-col rounded-lg border-2 ${COLUMN_BG_COLORS[status]} min-h-96 max-h-[calc(100vh-280px)] overflow-hidden`}
     >
       <div className="bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0">
         <h2 className="font-semibold text-slate-900 text-sm">{status}</h2>
