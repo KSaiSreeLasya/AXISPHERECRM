@@ -34,7 +34,18 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log(`🚀 Fusion Starter server running on port ${port}`);
   console.log(`📱 Frontend: http://localhost:${port}`);
-  console.log(`🔧 API: http://localhost:${port}/api`);
+  console.log(`🔧 API endpoints available:`);
+  console.log(`  - POST /api/auth/sign-in`);
+  console.log(`  - POST /api/auth/sign-up`);
+  console.log(`  - POST /api/leads/update`);
+  console.log(`  - POST /api/salespersons/delete`);
+  console.log(`  - GET /api/companies`);
+  console.log(`  - POST /api/sync-companies`);
+
+  if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+    console.error("⚠️  WARNING: Supabase environment variables are not set!");
+    console.error("   Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable API functionality");
+  }
 });
 
 // Graceful shutdown
