@@ -1,6 +1,27 @@
 import path from "path";
 import { createServer } from "./index";
-import * as express from "express";
+import express from "express";   // correct import
+
+// Log environment setup
+console.log("Starting Fusion server...");
+console.log("Environment variables:");
+console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`  PORT: ${process.env.PORT || 3000}`);
+console.log(
+  `  VITE_SUPABASE_URL: ${
+    process.env.VITE_SUPABASE_URL ? "✓ Set" : "✗ MISSING"
+  }`
+);
+console.log(
+  `  VITE_SUPABASE_ANON_KEY: ${
+    process.env.VITE_SUPABASE_ANON_KEY ? "✓ Set" : "✗ MISSING"
+  }`
+);
+console.log(
+  `  SUPABASE_SERVICE_ROLE_KEY: ${
+    process.env.SUPABASE_SERVICE_ROLE_KEY ? "✓ Set" : "✗ MISSING"
+  }`
+);
 
 const app = createServer();
 const port = process.env.PORT || 3000;
@@ -9,12 +30,12 @@ const port = process.env.PORT || 3000;
 const __dirname = import.meta.dirname;
 const distPath = path.join(__dirname, "../spa");
 
-// Serve static files
+// Serve static SPA files
 app.use(express.static(distPath));
 
-// Handle React Router - serve index.html for all non-API routes
-app.get("*", (req, res) => {
-  // Don't serve index.html for API routes
+// ⭐ FIXED: Use /* instead of * to avoid path-to-regexp crash
+app.get("/*", (req, res) => {
+  // Do not intercept API routes
   if (req.path.startsWith("/api/") || req.path.startsWith("/health")) {
     return res.status(404).json({ error: "API endpoint not found" });
   }
@@ -25,7 +46,20 @@ app.get("*", (req, res) => {
 app.listen(port, () => {
   console.log(`🚀 Fusion Starter server running on port ${port}`);
   console.log(`📱 Frontend: http://localhost:${port}`);
-  console.log(`🔧 API: http://localhost:${port}/api`);
+  console.log(`🔧 API endpoints available:`);
+  console.log(`  - POST /api/auth/sign-in`);
+  console.log(`  - POST /api/auth/sign-up`);
+  console.log(`  - POST /api/leads/update`);
+  console.log(`  - POST /api/salespersons/delete`);
+  console.log(`  - GET /api/companies`);
+  console.log(`  - POST /api/sync-companies`);
+
+  if (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY) {
+    console.error("⚠️  WARNING: Supabase environment variables are not set!");
+    console.error(
+      "   Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable API functionality"
+    );
+  }
 });
 
 // Graceful shutdown
