@@ -8,11 +8,16 @@ const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error("❌ Missing Supabase environment variables on server");
   console.error("  VITE_SUPABASE_URL:", supabaseUrl ? "SET" : "MISSING");
-  console.error("  VITE_SUPABASE_ANON_KEY:", supabaseAnonKey ? "SET" : "MISSING");
+  console.error(
+    "  VITE_SUPABASE_ANON_KEY:",
+    supabaseAnonKey ? "SET" : "MISSING",
+  );
 }
 
 if (!supabaseServiceKey) {
-  console.warn("⚠️  Missing VITE_SUPABASE_SERVICE_ROLE_KEY - RLS bypass will not work");
+  console.warn(
+    "⚠️  Missing VITE_SUPABASE_SERVICE_ROLE_KEY - RLS bypass will not work",
+  );
 }
 
 // Create Supabase client with anon key
@@ -40,9 +45,7 @@ export const handleAuthSignIn: RequestHandler = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password are required" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
     console.log("[SignIn] Attempting login for:", email);
@@ -83,9 +86,7 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password are required" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
     console.log("[SignUp] Creating auth user for:", email);

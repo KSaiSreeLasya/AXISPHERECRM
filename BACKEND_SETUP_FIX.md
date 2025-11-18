@@ -18,6 +18,7 @@
 7. You should see success messages for all policy creations
 
 **What these policies do:**
+
 - Allow all users to VIEW salespersons, leads, companies, and other tables
 - Allow authenticated users to CREATE new records
 - Allow users to UPDATE and DELETE records (properly configured for authorization)
@@ -34,6 +35,7 @@ ORDER BY table_name;
 ```
 
 You should see these tables:
+
 - `salespersons`
 - `leads`
 - `companies`
@@ -150,6 +152,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 ## Step 4: Test the Flows
 
 ### Test 1: Register as Salesperson
+
 1. Go to the Login page
 2. Click "Create Account"
 3. Fill in:
@@ -161,6 +164,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 5. **Expected Result**: You should be logged in and see the CRM dashboard
 
 ### Test 2: Add a Salesperson (Admin Only)
+
 1. Login with admin credentials:
    - Email: `admin@axisphere.in`
    - Password: `admin2024`
@@ -174,6 +178,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 6. **Expected Result**: Salesperson added successfully
 
 ### Test 3: Delete a Salesperson
+
 1. As admin, go to **Sales Persons** page
 2. Find the salesperson card
 3. Click the **Delete** (trash) icon
@@ -181,6 +186,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 5. **Expected Result**: Salesperson deleted successfully
 
 ### Test 4: Login as Salesperson
+
 1. Logout (if logged in)
 2. Go to Login page
 3. Enter the credentials from Test 1:
@@ -194,6 +200,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 ### "Authentication error: Failed to execute 'json' on 'Response': Unexpected end of JSON input"
 
 **Solution**: This error is fixed by applying the RLS policies in Step 1. Make sure:
+
 1. You ran the SQL script from `supabase/fix-rls-policies.sql`
 2. All policies were created successfully
 3. Restart the page or clear browser cache
@@ -201,6 +208,7 @@ CREATE TABLE IF NOT EXISTS invoices (
 ### "RLS policy violation"
 
 **Solution**: Make sure the RLS policies were applied correctly:
+
 1. Go to Supabase SQL Editor
 2. Run this query:
    ```sql
@@ -214,12 +222,14 @@ CREATE TABLE IF NOT EXISTS invoices (
 ### "Email already registered"
 
 **Solution**: The email is already registered in Supabase Auth. You can:
+
 1. Use a different email address
 2. Or go to Supabase Auth → Users and delete the user, then try again
 
 ### "Could not fetch user profile"
 
 **Solution**: The salesperson record wasn't created properly:
+
 1. Go to Supabase Table Editor
 2. Check the `salespersons` table
 3. Verify that a record exists for the user
