@@ -33,6 +33,7 @@ const serverSupabaseAdmin =
 export const handleAuthSignIn: RequestHandler = async (req, res) => {
   try {
     if (!serverSupabase) {
+      console.error("Sign In Error: Supabase client not initialized");
       return res.status(500).json({ error: "Server configuration error" });
     }
 
@@ -44,20 +45,25 @@ export const handleAuthSignIn: RequestHandler = async (req, res) => {
         .json({ error: "Email and password are required" });
     }
 
+    console.log("[SignIn] Attempting login for:", email);
     const { data, error } = await serverSupabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
+      console.error("[SignIn] Auth error:", error);
       return res.status(401).json({ error: error.message });
     }
 
-    return res.json({
+    console.log("[SignIn] User authenticated:", data.user?.id);
+    const responseData = {
       user: data.user,
       session: data.session,
-    });
+    };
+    return res.json(responseData);
   } catch (err) {
+    console.error("[SignIn] Exception:", err);
     return res.status(500).json({
       error: err instanceof Error ? err.message : "Sign in failed",
     });
