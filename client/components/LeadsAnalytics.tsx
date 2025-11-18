@@ -84,12 +84,12 @@ export function LeadsAnalytics({ leads }: LeadsAnalyticsProps) {
         return (
           <div
             key={status}
-            className={`rounded-lg border-2 p-4 text-center ${colors.bg} ${colors.border}`}
+            className={`rounded-lg border-2 p-3 text-center ${colors.bg} ${colors.border}`}
           >
             <p className="text-xs font-medium text-slate-600 mb-1 truncate">
               {status}
             </p>
-            <p className={`text-3xl font-bold ${colors.text}`}>{count}</p>
+            <p className={`text-2xl font-bold ${colors.text}`}>{count}</p>
           </div>
         );
       })}
