@@ -31,41 +31,33 @@ export function KanbanLeadCard({
       draggable
       onDragStart={(e) => onDragStart(e, lead.id)}
       onClick={() => onSelect(lead)}
-      className="bg-white border border-slate-200 rounded-lg p-4 cursor-grab active:cursor-grabbing hover:border-blue-400 hover:shadow-md transition-all group"
+      className="bg-white border border-slate-200 rounded-lg p-3 cursor-grab active:cursor-grabbing hover:border-blue-400 hover:shadow-md transition-all group"
     >
       <div className="flex items-start justify-between gap-2 mb-2">
-        <h3 className="font-semibold text-slate-900 flex-1 truncate text-sm">
+        <h3 className="font-semibold text-slate-900 flex-1 truncate text-xs leading-tight">
           {lead.name}
         </h3>
-        <GripVertical className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+        <GripVertical className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5" />
       </div>
 
-      <div className="flex items-center justify-between mb-3">
-        <span
-          className={`px-2 py-0.5 rounded text-xs font-medium flex-shrink-0 ${STATUS_COLORS[status]}`}
-        >
-          {status}
-        </span>
-      </div>
-
-      <div className="space-y-2 text-xs mb-3">
+      <div className="space-y-1 text-xs mb-2">
         {lead.company && (
-          <div>
-            <p className="text-slate-600 font-medium">Company</p>
-            <p className="text-slate-900 truncate">{lead.company}</p>
+          <div className="line-clamp-1">
+            <p className="text-slate-500 font-medium text-[10px]">Company</p>
+            <p className="text-slate-900 truncate text-xs">{lead.company}</p>
           </div>
         )}
         {lead.jobTitle && (
-          <div>
-            <p className="text-slate-600 font-medium">Position</p>
-            <p className="text-slate-900 truncate">{lead.jobTitle}</p>
+          <div className="line-clamp-1">
+            <p className="text-slate-500 font-medium text-[10px]">Position</p>
+            <p className="text-slate-900 truncate text-xs">{lead.jobTitle}</p>
           </div>
         )}
       </div>
 
-      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-xs text-slate-600 truncate">
-          Assigned: {getSalespersonName(lead.assignedTo)}
+      <div className="pt-2 border-t border-slate-100">
+        <span className="text-[10px] text-slate-600 truncate block">
+          {getSalespersonName(lead.assignedTo)}
         </span>
       </div>
     </div>
