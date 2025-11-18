@@ -12,7 +12,7 @@ import {
   handleAuthSignOut,
   handleAuthSession,
 } from "./routes/auth";
-import { handleUpdateLead } from "./routes/leads";
+import { handleUpdateLead, handleDeleteSalesperson } from "./routes/leads";
 
 export function createServer() {
   const app = express();
