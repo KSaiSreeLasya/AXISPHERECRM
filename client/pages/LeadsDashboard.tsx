@@ -133,27 +133,9 @@ export default function LeadsDashboard() {
           </p>
         </div>
 
-        {/* Status Analytics Cards */}
-        <div className="grid grid-cols-7 gap-3">
-          {LEAD_STATUSES.map((status) => {
-            const count = leadsGroupedByStatus[status].length;
-            const colorClass = STATUS_COLORS[status];
-
-            return (
-              <div
-                key={`analytics-${status}`}
-                className={`rounded-lg p-4 text-center transition-all ${colorClass}`}
-              >
-                <div className="text-2xl font-bold mb-1">{count}</div>
-                <div className="text-xs font-medium line-clamp-2">{status}</div>
-              </div>
-            );
-          })}
-        </div>
-
         {/* Kanban Board */}
         <div className="overflow-x-auto pb-4">
-          <div className="grid grid-cols-7 gap-3 min-w-max md:min-w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 min-w-max md:min-w-full">
             {LEAD_STATUSES.map((status) => {
               const statusLeads = leadsGroupedByStatus[status];
               const count = statusLeads.length;
@@ -161,7 +143,7 @@ export default function LeadsDashboard() {
               return (
                 <div
                   key={status}
-                  className={`flex flex-col bg-white rounded-lg border-2 transition-all min-h-80 flex-shrink-0 w-full ${
+                  className={`flex flex-col bg-white rounded-lg border-2 transition-all min-h-96 flex-shrink-0 md:flex-shrink w-full md:w-auto ${
                     dragOverStatus === status
                       ? "border-blue-400 bg-blue-50 shadow-lg"
                       : "border-slate-200"
