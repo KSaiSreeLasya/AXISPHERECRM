@@ -99,6 +99,15 @@ export default function CreateInvoice() {
       return;
     }
 
+    if (formData.packagePrice <= 0) {
+      toast({
+        title: "Error",
+        description: "Package price must be greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (formData.paidAmount <= 0) {
       toast({
         title: "Error",
