@@ -105,14 +105,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           body: JSON.stringify({ email, password }),
         });
 
+        let parsedData;
+        try {
+          parsedData = await response.json();
+        } catch (_parseErr) {
+          throw new Error("Invalid response from server");
+        }
+
         if (!response.ok) {
-          const errorData = await response.json();
-          const errorMessage = errorData.error || "Invalid email or password";
+          const errorMessage = parsedData.error || "Invalid email or password";
           console.error("Auth sign in error:", errorMessage);
           throw new Error(errorMessage);
         }
 
-        responseData = await response.json();
+        responseData = parsedData;
       } catch (err) {
         if (err instanceof Error) {
           throw err;
@@ -173,14 +179,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           body: JSON.stringify({ email, password }),
         });
 
+        let parsedData;
+        try {
+          parsedData = await response.json();
+        } catch (_parseErr) {
+          throw new Error("Invalid response from server");
+        }
+
         if (!response.ok) {
-          const errorData = await response.json();
-          const errorMessage = errorData.error || "Failed to create account";
+          const errorMessage = parsedData.error || "Failed to create account";
           console.error("Auth sign up error:", errorMessage);
           throw new Error(errorMessage);
         }
 
-        authData = await response.json();
+        authData = parsedData;
       } catch (err) {
         if (err instanceof Error) {
           throw err;
