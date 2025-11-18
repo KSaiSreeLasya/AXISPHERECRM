@@ -70,11 +70,11 @@ export function KanbanBoard({
   };
 
   return (
-    <div className="w-full overflow-x-auto pb-4">
+    <div className="w-full pb-4">
       <div
-        className="grid gap-4"
+        className="grid gap-3"
         style={{
-          gridTemplateColumns: `repeat(${statuses.length}, minmax(350px, 1fr))`,
+          gridTemplateColumns: `repeat(${statuses.length}, minmax(220px, 1fr))`,
         }}
       >
         {statuses.map((status) => (
