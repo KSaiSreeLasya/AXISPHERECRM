@@ -37,7 +37,6 @@ const STATUS_BG_COLORS: Record<LeadStatus, string> = {
 
 export default function LeadsDashboard() {
   const { leads, salespersons, isLoading, updateLead } = useCRMStore();
-  const [selectedStatus, setSelectedStatus] = useState<LeadStatus | null>(null);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [draggingLead, setDraggingLead] = useState<Lead | null>(null);
   const [dragOverStatus, setDragOverStatus] = useState<LeadStatus | null>(null);
