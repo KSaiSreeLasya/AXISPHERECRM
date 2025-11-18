@@ -100,7 +100,7 @@ See [RENDER_DEPLOYMENT_SETUP.md](./RENDER_DEPLOYMENT_SETUP.md) for detailed inst
 
 ## Files Created
 
-- `FLY_DEPLOYMENT_FIX.md` - Complete Fly.io deployment guide
+- `RENDER_DEPLOYMENT_SETUP.md` - Complete Render deployment guide
 - `ERROR_FIXES_SUMMARY.md` - This file
 - `SUPABASE_SETUP.md` - RLS policy fixes guide
 
