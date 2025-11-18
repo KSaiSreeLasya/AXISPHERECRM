@@ -73,10 +73,6 @@ export default function LeadsDashboard() {
     }
   });
 
-  const displayLeads = selectedStatus
-    ? leadsGroupedByStatus[selectedStatus]
-    : leads;
-
   const getSalespersonName = (assignedTo?: string) => {
     if (!assignedTo) return "Unassigned";
     const salesperson = salespersons.find((sp) => sp.id === assignedTo);
