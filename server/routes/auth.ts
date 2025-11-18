@@ -76,7 +76,9 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
 
     // If user already exists, get their ID from admin API
     if (error?.message?.includes("already registered")) {
-      console.log("Email already registered in auth system, retrieving existing user ID");
+      console.log(
+        "Email already registered in auth system, retrieving existing user ID",
+      );
 
       if (!adminSupabase) {
         return res.status(500).json({
@@ -85,7 +87,8 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
       }
 
       // Use admin API to find the user by email
-      const { data: users, error: listError } = await adminSupabase.auth.admin.listUsers();
+      const { data: users, error: listError } =
+        await adminSupabase.auth.admin.listUsers();
 
       if (listError) {
         console.error("Error listing users:", listError);
@@ -98,7 +101,8 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
 
       if (!existingUser) {
         return res.status(400).json({
-          error: "Email already registered but user not found. Please contact support.",
+          error:
+            "Email already registered but user not found. Please contact support.",
         });
       }
 

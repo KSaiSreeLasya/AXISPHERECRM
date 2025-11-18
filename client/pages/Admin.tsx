@@ -146,7 +146,8 @@ export default function Admin() {
           }
 
           if (!response.ok) {
-            const errorMessage = responseData.error || "Failed to create account";
+            const errorMessage =
+              responseData.error || "Failed to create account";
             throw new Error(errorMessage);
           }
 
