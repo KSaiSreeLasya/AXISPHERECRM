@@ -68,38 +68,26 @@ AuthUnknownError: Failed to execute 'json' on 'Response': body stream already re
 
 No action needed - the app works on localhost with current fixes.
 
-### For Fly.io Deployment
+### For Render Deployment
 
-**Option 1: Use Server-Side Auth (Recommended)**
+**Use Server-Side Auth (Recommended)**
 
-Update `client/contexts/AuthContext.tsx` to use `/api/auth/*` endpoints instead of calling Supabase directly:
+The app already uses `/api/auth/*` endpoints for authentication, which is the correct approach for Render:
 
-```typescript
-const login = async (email: string, password: string) => {
-  const response = await fetch("/api/auth/sign-in", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+1. Push your code to GitHub
+2. Create a new Web Service on Render connected to your GitHub repo
+3. Set environment variables in Render Dashboard:
+   - `VITE_SUPABASE_URL` - Your Supabase Project URL
+   - `VITE_SUPABASE_ANON_KEY` - Your Supabase anon key
+   - `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key
+4. Render will automatically build and deploy
 
-  if (!response.ok) throw new Error("Login failed");
-  const { user } = await response.json();
-  setUser(user);
-};
-```
+See [RENDER_DEPLOYMENT_SETUP.md](./RENDER_DEPLOYMENT_SETUP.md) for detailed instructions.
 
-**Option 2: Switch to Netlify Deployment**
+**Alternative Deployment Platforms:**
 
-The Netlify configuration is already set up. Deploy using:
-
-```bash
-npm install -g netlify-cli
-netlify deploy
-```
-
-**Option 3: Switch to Vercel**
-
-Vercel handles Supabase requests better than Fly.io. Update deployment configuration accordingly.
+- [Netlify](https://www.netlify.com) - Configuration already set up
+- [Vercel](https://vercel.com) - Excellent React/Node support
 
 ---
 
