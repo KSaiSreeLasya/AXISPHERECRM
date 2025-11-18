@@ -117,12 +117,12 @@ See [RENDER_DEPLOYMENT_SETUP.md](./RENDER_DEPLOYMENT_SETUP.md) for detailed inst
 
    Then test at http://localhost:8080
 
-2. **For Fly.io:**
-   - Set environment variables with `fly secrets set`
-   - Deploy with `fly deploy`
-   - Monitor with `fly logs`
+2. **For Render:**
+   - Follow [RENDER_DEPLOYMENT_SETUP.md](./RENDER_DEPLOYMENT_SETUP.md)
+   - Set environment variables in Render Dashboard
+   - Render will automatically build and deploy
 
-3. **Or Switch Deployment Platform:**
+3. **Or Use Alternative Deployment Platform:**
    - [Netlify](https://www.netlify.com) - Configuration ready to use
    - [Vercel](https://vercel.com) - Excellent React/Node support
 
