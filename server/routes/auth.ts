@@ -74,28 +74,52 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
       password,
     });
 
-    // If user already exists, try to sign them in instead
+    // If user already exists, get their ID from admin API
     if (error?.message?.includes("already registered")) {
-      console.log("Email already registered in auth system, attempting sign in with provided password");
-      const signInResult = await serverSupabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      console.log("Email already registered in auth system, retrieving existing user ID");
 
-      if (signInResult.error) {
-        console.error("Sign in error:", signInResult.error);
-        return res.status(400).json({
-          error: "Email already registered. Please use the correct password or contact support.",
+      if (!adminSupabase) {
+        return res.status(500).json({
+          error: "Unable to retrieve existing user. Please contact support.",
         });
       }
 
-      data = signInResult.data;
-    } else if (error) {
+      // Use admin API to find the user by email
+      const { data: users, error: listError } = await adminSupabase.auth.admin.listUsers();
+
+      if (listError) {
+        console.error("Error listing users:", listError);
+        return res.status(400).json({
+          error: "Email already registered. Please contact support.",
+        });
+      }
+
+      const existingUser = users?.users?.find((u) => u.email === email);
+
+      if (!existingUser) {
+        return res.status(400).json({
+          error: "Email already registered but user not found. Please contact support.",
+        });
+      }
+
+      // Return the existing user's ID (no session since we didn't create it)
+      res.json({
+        user: {
+          id: existingUser.id,
+          email: existingUser.email,
+          user_metadata: existingUser.user_metadata,
+        },
+        session: null,
+      });
+      return;
+    }
+
+    if (error) {
       console.error("Auth error:", error);
       return res.status(400).json({ error: error.message });
     }
 
-    // Return auth data
+    // Return auth data for new signup
     res.json({
       user: data?.user,
       session: data?.session,
