@@ -174,7 +174,12 @@ export async function updateLead(id: string, updates: Partial<Lead>) {
       }),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      throw new Error(`Failed to parse response: ${String(parseError)}`);
+    }
 
     if (!response.ok) {
       const errorMessage = data.details || data.error || "Unknown error";
