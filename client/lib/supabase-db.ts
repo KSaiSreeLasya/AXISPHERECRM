@@ -305,35 +305,29 @@ export async function updateSalesperson(
 
 export async function deleteSalesperson(id: string) {
   try {
-    // Use server-side endpoint to bypass RLS restrictions
-    const response = await fetch("/api/salespersons/delete", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        salespersonId: id,
-      }),
-    });
+    // First, delete all leads assigned to this salesperson
+    const { error: leadsError } = await supabase
+      .from("leads")
+      .delete()
+      .eq("assigned_to", id);
 
-    let data;
-    try {
-      data = await response.json();
-    } catch (parseError) {
-      throw new Error(`Failed to parse response: ${String(parseError)}`);
+    if (leadsError) {
+      console.error("Error deleting leads for salesperson:", leadsError);
+      throw leadsError;
     }
 
-    if (!response.ok) {
-      const errorMessage = data.details || data.error || "Unknown error";
-      console.error("Error deleting salesperson:", errorMessage);
-      throw new Error(`Failed to delete salesperson: ${errorMessage}`);
-    }
+    // Then delete the salesperson
+    const { error: spError } = await supabase
+      .from("salespersons")
+      .delete()
+      .eq("id", id);
 
-    if (!data.success) {
-      throw new Error(data.error || "Failed to delete salesperson");
+    if (spError) {
+      console.error("Error deleting salesperson:", spError);
+      throw spError;
     }
   } catch (error) {
-    console.error("Exception deleting salesperson:", error);
+    console.error("Error in deleteSalesperson:", error);
     throw error;
   }
 }

@@ -12,7 +12,7 @@ import {
   handleAuthSignOut,
   handleAuthSession,
 } from "./routes/auth";
-import { handleUpdateLead, handleDeleteSalesperson } from "./routes/leads";
+import { handleUpdateLead } from "./routes/leads";
 
 export function createServer() {
   const app = express();
@@ -55,9 +55,6 @@ export function createServer() {
 
   // Leads API
   app.post("/api/leads/update", handleUpdateLead);
-
-  // Salespersons API
-  app.post("/api/salespersons/delete", handleDeleteSalesperson);
 
   // Apollo proxy
   app.post("/api/apollo", handleApolloProxy);
