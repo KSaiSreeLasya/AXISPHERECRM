@@ -3,15 +3,33 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error("❌ Missing Supabase environment variables on server");
+  console.error("  VITE_SUPABASE_URL:", supabaseUrl ? "SET" : "MISSING");
+  console.error(
+    "  VITE_SUPABASE_ANON_KEY:",
+    supabaseAnonKey ? "SET" : "MISSING",
+  );
 }
 
-// Create Supabase client
+if (!supabaseServiceKey) {
+  console.warn(
+    "⚠️  Missing VITE_SUPABASE_SERVICE_ROLE_KEY - RLS bypass will not work",
+  );
+}
+
+// Create Supabase client with anon key
 const serverSupabase =
   supabaseUrl && supabaseAnonKey
     ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
+
+// Create Supabase client with service role key (bypasses RLS)
+const serverSupabaseAdmin =
+  supabaseUrl && supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey)
     : null;
 
 /* =========================================================
@@ -20,31 +38,35 @@ const serverSupabase =
 export const handleAuthSignIn: RequestHandler = async (req, res) => {
   try {
     if (!serverSupabase) {
+      console.error("Sign In Error: Supabase client not initialized");
       return res.status(500).json({ error: "Server configuration error" });
     }
 
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password are required" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
+    console.log("[SignIn] Attempting login for:", email);
     const { data, error } = await serverSupabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
+      console.error("[SignIn] Auth error:", error);
       return res.status(401).json({ error: error.message });
     }
 
-    return res.json({
+    console.log("[SignIn] User authenticated:", data.user?.id);
+    const responseData = {
       user: data.user,
       session: data.session,
-    });
+    };
+    return res.json(responseData);
   } catch (err) {
+    console.error("[SignIn] Exception:", err);
     return res.status(500).json({
       error: err instanceof Error ? err.message : "Sign in failed",
     });
@@ -57,17 +79,17 @@ export const handleAuthSignIn: RequestHandler = async (req, res) => {
 export const handleAuthSignUp: RequestHandler = async (req, res) => {
   try {
     if (!serverSupabase) {
+      console.error("Sign Up Error: Supabase client not initialized");
       return res.status(500).json({ error: "Server configuration error" });
     }
 
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password are required" });
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
+    console.log("[SignUp] Creating auth user for:", email);
     const { data, error } = await serverSupabase.auth.signUp({
       email,
       password,
@@ -75,21 +97,33 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
 
     // Supabase returns this when the person already signed up earlier
     if (error?.message?.includes("already registered")) {
+      console.log("[SignUp] Email already registered:", email);
       return res.status(409).json({
         error: "Email already registered",
       });
     }
 
     if (error) {
+      console.error("[SignUp] Auth error:", error);
       return res.status(400).json({ error: error.message });
     }
 
+    console.log("[SignUp] Auth user created:", data?.user?.id);
+
     // 💯 Always return VALID JSON (important fix!)
-    return res.json({
+    const responseData = {
       user: data?.user || null,
       session: data?.session || null,
+    };
+
+    console.log("[SignUp] Returning response:", {
+      user: responseData.user?.id,
+      hasSession: !!responseData.session,
     });
+
+    return res.json(responseData);
   } catch (err) {
+    console.error("[SignUp] Exception:", err);
     return res.status(500).json({
       error: "Signup failed",
       details: err instanceof Error ? err.message : "Unknown error",
