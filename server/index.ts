@@ -13,6 +13,7 @@ import {
   handleAuthSession,
 } from "./routes/auth";
 import { handleUpdateLead } from "./routes/leads";
+import { handleDeleteSalesperson } from "./routes/salespersons";
 
 export function createServer() {
   const app = express();
