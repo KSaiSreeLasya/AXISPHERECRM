@@ -224,7 +224,7 @@ export default function Salespersons() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={handleCancel}
+                  onClick={closeForm}
                   disabled={isSubmitting}
                 >
                   Cancel
