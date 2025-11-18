@@ -3,15 +3,28 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error("❌ Missing Supabase environment variables on server");
+  console.error("  VITE_SUPABASE_URL:", supabaseUrl ? "SET" : "MISSING");
+  console.error("  VITE_SUPABASE_ANON_KEY:", supabaseAnonKey ? "SET" : "MISSING");
 }
 
-// Create Supabase client
+if (!supabaseServiceKey) {
+  console.warn("⚠️  Missing VITE_SUPABASE_SERVICE_ROLE_KEY - RLS bypass will not work");
+}
+
+// Create Supabase client with anon key
 const serverSupabase =
   supabaseUrl && supabaseAnonKey
     ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
+
+// Create Supabase client with service role key (bypasses RLS)
+const serverSupabaseAdmin =
+  supabaseUrl && supabaseServiceKey
+    ? createClient(supabaseUrl, supabaseServiceKey)
     : null;
 
 /* =========================================================
