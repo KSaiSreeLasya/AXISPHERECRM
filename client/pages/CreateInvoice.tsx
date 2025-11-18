@@ -24,6 +24,7 @@ export default function CreateInvoice() {
     email: "",
     phoneNumber: "",
     companyName: "",
+    packagePrice: selectedPackage?.price || 0,
     paidAmount: selectedPackage?.price || 0,
     additionalNotes: "",
     taxPercentage: 0,
@@ -98,6 +99,15 @@ export default function CreateInvoice() {
       return;
     }
 
+    if (formData.packagePrice <= 0) {
+      toast({
+        title: "Error",
+        description: "Package price must be greater than 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (formData.paidAmount <= 0) {
       toast({
         title: "Error",
@@ -121,7 +131,7 @@ export default function CreateInvoice() {
         companyName: formData.companyName || "",
         packageId: selectedPackage.id,
         packageName: selectedPackage.name,
-        packagePrice: selectedPackage.price,
+        packagePrice: formData.packagePrice,
         scope,
         paidAmount: formData.paidAmount,
         additionalNotes: formData.additionalNotes,
@@ -301,13 +311,19 @@ export default function CreateInvoice() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Package Price
+                  Package Price *
                 </label>
                 <Input
                   type="number"
-                  value={selectedPackage.price}
-                  disabled
-                  className="bg-slate-50"
+                  value={formData.packagePrice}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      packagePrice: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  placeholder="Enter package price"
+                  required
                 />
               </div>
               <div>
@@ -336,7 +352,7 @@ export default function CreateInvoice() {
                 <Input
                   type="number"
                   value={(
-                    selectedPackage.price *
+                    formData.packagePrice *
                     (formData.taxPercentage / 100)
                   ).toFixed(2)}
                   disabled
