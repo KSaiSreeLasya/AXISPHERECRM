@@ -2,6 +2,15 @@ import path from "path";
 import { createServer } from "./index";
 import * as express from "express";
 
+// Log environment setup
+console.log("Starting Fusion server...");
+console.log("Environment variables:");
+console.log(`  NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`  PORT: ${process.env.PORT || 3000}`);
+console.log(`  VITE_SUPABASE_URL: ${process.env.VITE_SUPABASE_URL ? "✓ Set" : "✗ MISSING"}`);
+console.log(`  VITE_SUPABASE_ANON_KEY: ${process.env.VITE_SUPABASE_ANON_KEY ? "✓ Set" : "✗ MISSING"}`);
+console.log(`  SUPABASE_SERVICE_ROLE_KEY: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? "✓ Set" : "✗ MISSING"}`);
+
 const app = createServer();
 const port = process.env.PORT || 3000;
 
