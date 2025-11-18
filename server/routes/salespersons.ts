@@ -6,7 +6,10 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Debug: log if keys are loaded
 console.log("[Salespersons Route] Supabase URL loaded:", !!supabaseUrl);
-console.log("[Salespersons Route] Service Role Key loaded:", !!supabaseServiceKey);
+console.log(
+  "[Salespersons Route] Service Role Key loaded:",
+  !!supabaseServiceKey,
+);
 
 if (!supabaseUrl) {
   console.error("Missing VITE_SUPABASE_URL on server");
@@ -70,7 +73,8 @@ export const handleDeleteSalesperson: RequestHandler = async (req, res) => {
   } catch (error) {
     console.error("Salesperson delete error:", error);
     res.status(500).json({
-      error: error instanceof Error ? error.message : "Salesperson deletion failed",
+      error:
+        error instanceof Error ? error.message : "Salesperson deletion failed",
     });
   }
 };
