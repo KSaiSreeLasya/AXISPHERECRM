@@ -62,13 +62,13 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
     }
 
     // Try to sign up first
-    let data = await serverSupabase.auth.signUp({
+    let { data, error } = await serverSupabase.auth.signUp({
       email,
       password,
     });
 
     // If user already exists, try to sign them in instead
-    if (data.error?.message?.includes("already registered")) {
+    if (error?.message?.includes("already registered")) {
       console.log("Email already registered in auth system, attempting sign in with provided password");
       const signInResult = await serverSupabase.auth.signInWithPassword({
         email,
@@ -82,16 +82,16 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
         });
       }
 
-      data = signInResult;
-    } else if (data.error) {
-      console.error("Auth error:", data.error);
-      return res.status(400).json({ error: data.error.message });
+      data = signInResult.data;
+    } else if (error) {
+      console.error("Auth error:", error);
+      return res.status(400).json({ error: error.message });
     }
 
     // Return auth data
     res.json({
-      user: data.data?.user,
-      session: data.data?.session,
+      user: data?.user,
+      session: data?.session,
     });
   } catch (error) {
     console.error("Sign up error:", error);
