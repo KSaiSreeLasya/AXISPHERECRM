@@ -70,6 +70,7 @@ export const handleAuthSignIn: RequestHandler = async (req, res) => {
 export const handleAuthSignUp: RequestHandler = async (req, res) => {
   try {
     if (!serverSupabase) {
+      console.error("Sign Up Error: Supabase client not initialized");
       return res.status(500).json({ error: "Server configuration error" });
     }
 
@@ -81,6 +82,7 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
         .json({ error: "Email and password are required" });
     }
 
+    console.log("[SignUp] Creating auth user for:", email);
     const { data, error } = await serverSupabase.auth.signUp({
       email,
       password,
@@ -88,21 +90,33 @@ export const handleAuthSignUp: RequestHandler = async (req, res) => {
 
     // Supabase returns this when the person already signed up earlier
     if (error?.message?.includes("already registered")) {
+      console.log("[SignUp] Email already registered:", email);
       return res.status(409).json({
         error: "Email already registered",
       });
     }
 
     if (error) {
+      console.error("[SignUp] Auth error:", error);
       return res.status(400).json({ error: error.message });
     }
 
+    console.log("[SignUp] Auth user created:", data?.user?.id);
+
     // 💯 Always return VALID JSON (important fix!)
-    return res.json({
+    const responseData = {
       user: data?.user || null,
       session: data?.session || null,
+    };
+
+    console.log("[SignUp] Returning response:", {
+      user: responseData.user?.id,
+      hasSession: !!responseData.session,
     });
+
+    return res.json(responseData);
   } catch (err) {
+    console.error("[SignUp] Exception:", err);
     return res.status(500).json({
       error: "Signup failed",
       details: err instanceof Error ? err.message : "Unknown error",
