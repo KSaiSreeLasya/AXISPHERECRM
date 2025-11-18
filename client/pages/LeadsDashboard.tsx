@@ -161,7 +161,7 @@ export default function LeadsDashboard() {
               return (
                 <div
                   key={status}
-                  className={`flex flex-col bg-white rounded-lg border-2 transition-all min-h-96 flex-shrink-0 md:flex-shrink w-full md:w-auto ${
+                  className={`flex flex-col bg-white rounded-lg border-2 transition-all min-h-80 flex-shrink-0 w-full ${
                     dragOverStatus === status
                       ? "border-blue-400 bg-blue-50 shadow-lg"
                       : "border-slate-200"
