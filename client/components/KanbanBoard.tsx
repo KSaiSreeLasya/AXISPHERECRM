@@ -74,7 +74,7 @@ export function KanbanBoard({
       <div
         className="grid gap-3"
         style={{
-          gridTemplateColumns: `repeat(${statuses.length}, minmax(220px, 1fr))`,
+          gridTemplateColumns: `repeat(${statuses.length}, minmax(180px, 1fr))`,
         }}
       >
         {statuses.map((status) => (
