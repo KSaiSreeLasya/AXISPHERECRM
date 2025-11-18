@@ -37,7 +37,9 @@ export function KanbanColumn({
       className={`flex flex-col rounded-lg border-2 ${COLUMN_BG_COLORS[status]} min-h-96 max-h-[calc(100vh-280px)] overflow-hidden`}
     >
       <div className="bg-white border-b border-slate-200 px-3 py-2 flex items-center justify-between sticky top-0">
-        <h2 className="font-semibold text-slate-900 text-xs truncate">{status}</h2>
+        <h2 className="font-semibold text-slate-900 text-xs truncate">
+          {status}
+        </h2>
         <span className="px-2 py-0.5 bg-slate-200 text-slate-700 rounded-full text-xs font-semibold flex-shrink-0">
           {leads.length}
         </span>

@@ -10,7 +10,10 @@ const LEAD_STATUSES: LeadStatus[] = [
   "Result",
 ];
 
-const STATUS_COLORS: Record<LeadStatus, { bg: string; text: string; border: string }> = {
+const STATUS_COLORS: Record<
+  LeadStatus,
+  { bg: string; text: string; border: string }
+> = {
   "No Stage": {
     bg: "bg-gray-50",
     text: "text-gray-800",

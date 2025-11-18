@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Lead, LeadStatus, Salesperson, useCRMStore } from "@/hooks/useCRMStore";
+import {
+  Lead,
+  LeadStatus,
+  Salesperson,
+  useCRMStore,
+} from "@/hooks/useCRMStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
