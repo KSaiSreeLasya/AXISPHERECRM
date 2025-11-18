@@ -11,7 +11,6 @@
 1. Go to your **Supabase Project Dashboard**
 2. Click **Settings** → **API** (left sidebar)
 3. Copy these values:
-
    - **Project URL** (example: `https://abcdefghijklmn.supabase.co`)
    - **anon public** key (starts with `eyJ...`)
    - **service_role secret** key (starts with `eyJ...`)
@@ -23,7 +22,6 @@
 1. Go to your Render Web Service dashboard
 2. Click **Environment** (left sidebar)
 3. Add these environment variables:
-
    - **VITE_SUPABASE_URL**: Your Supabase Project URL
    - **VITE_SUPABASE_ANON_KEY**: Your anon public key
    - **SUPABASE_SERVICE_ROLE_KEY**: Your service_role secret key

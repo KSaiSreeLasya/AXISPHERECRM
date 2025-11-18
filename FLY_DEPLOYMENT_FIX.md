@@ -62,6 +62,7 @@ See [RENDER_DEPLOYMENT_SETUP.md](./RENDER_DEPLOYMENT_SETUP.md) for step-by-step 
 ## Monitoring Logs
 
 In Render Dashboard:
+
 1. Go to your Web Service
 2. Click **Logs** tab
 3. Watch for deployment and runtime logs
