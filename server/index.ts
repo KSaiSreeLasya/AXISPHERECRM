@@ -57,6 +57,9 @@ export function createServer() {
   // Leads API
   app.post("/api/leads/update", handleUpdateLead);
 
+  // Salespersons API
+  app.post("/api/salespersons/delete", handleDeleteSalesperson);
+
   // Apollo proxy
   app.post("/api/apollo", handleApolloProxy);
 
