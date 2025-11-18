@@ -1,16 +1,14 @@
-# Fixing "body stream already read" Error on Fly.io
+# Fixing "body stream already read" Error on Render
 
 ## Root Cause
 
-The error occurs when Supabase client tries to parse a response body that has already been consumed. On Fly.io deployments, this happens because:
+The error occurs when Supabase client tries to parse a response body that has already been consumed. On Render deployments, this happens because:
 
 1. The Express/Vite server is running in production mode
 2. Response bodies are being intercepted or consumed before Supabase client can read them
-3. The Netlify redirects in `netlify.toml` don't apply to Fly.io, causing routing issues
+3. Certain proxy configurations intercept HTTP responses
 
-## Solutions
-
-### Solution 1: Use Server-Side Auth Proxy (Recommended for Fly.io)
+## Solution: Use Server-Side Auth Proxy (Recommended for Render)
 
 The application now includes server-side auth routes that handle authentication, bypassing the client-side response body issue:
 
@@ -21,64 +19,7 @@ The application now includes server-side auth routes that handle authentication,
 - `POST /api/auth/sign-out` - Logout
 - `GET /api/auth/session` - Check session
 
-**Update `client/contexts/AuthContext.tsx` to use these endpoints:**
-
-```typescript
-const login = async (email: string, password: string) => {
-  try {
-    const response = await fetch("/api/auth/sign-in", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    const { user, session } = await response.json();
-    setUser(user);
-    // Store session if needed
-  } catch (error) {
-    console.error("Login error:", error);
-    throw error;
-  }
-};
-```
-
-### Solution 2: Update Fly.io Deployment Configuration
-
-Create `fly.toml` configuration:
-
-```toml
-[build]
-  image = "node:20-alpine"
-
-[env]
-  VITE_SUPABASE_URL = "your-supabase-url"
-  VITE_SUPABASE_ANON_KEY = "your-anon-key"
-
-[[services]]
-  protocol = "tcp"
-  internal_port = 8080
-  processes = ["app"]
-
-  [services.concurrency]
-    type = "connections"
-    hard_limit = 25
-    soft_limit = 20
-```
-
-### Solution 3: Remove Netlify Configuration
-
-If deploying to Fly.io, remove or update `netlify.toml`:
-
-```toml
-# Remove API redirects as Fly.io doesn't use Netlify Functions
-[build]
-  command = "npm run build"
-  publish = "dist/spa"
-```
+These endpoints read the response body once and reuse the data, preventing the "body stream already read" error.
 
 ## Testing Locally
 
@@ -95,44 +36,42 @@ If deploying to Fly.io, remove or update `netlify.toml`:
    ```
 
 3. Test authentication:
-   - Go to `http://localhost:8080/register`
-   - Create account
-   - Login with credentials
+   - Go to `http://localhost:8080/`
+   - Create account or login with credentials
 
-## Deploying to Fly.io
+## Deploying to Render
 
-1. Install Fly.io CLI:
+1. Push your code to GitHub
 
-   ```bash
-   curl -L https://fly.io/install.sh | sh
-   ```
+2. Create a new Web Service on Render:
+   - Connect your GitHub repository
+   - Build command: `npm run build`
+   - Start command: `npm run start`
 
-2. Set environment variables:
+3. Set environment variables in Render Dashboard:
+   - `VITE_SUPABASE_URL` - Your Supabase Project URL
+   - `VITE_SUPABASE_ANON_KEY` - Your Supabase anon key
+   - `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key
 
-   ```bash
-   fly secrets set VITE_SUPABASE_URL="your-url"
-   fly secrets set VITE_SUPABASE_ANON_KEY="your-key"
-   ```
+4. Render will automatically build and deploy
 
-3. Deploy:
-   ```bash
-   fly deploy
-   ```
+## Detailed Setup Guide
 
-## Monitoring
+See [RENDER_DEPLOYMENT_SETUP.md](./RENDER_DEPLOYMENT_SETUP.md) for step-by-step instructions and troubleshooting.
 
-Check logs on Fly.io:
+## Monitoring Logs
 
-```bash
-fly logs -a your-app-name
-```
+In Render Dashboard:
+1. Go to your Web Service
+2. Click **Logs** tab
+3. Watch for deployment and runtime logs
 
 ## Alternative: Use a Different Deployment Platform
 
-If Fly.io issues persist, consider:
+If needed, you can also deploy to:
 
 - **Netlify**: Use the existing Netlify configuration
-- **Vercel**: Update for Vercel deployment
+- **Vercel**: Excellent React/Node support
 - **AWS Amplify**: Native AWS integration
 
 Choose the platform that best fits your needs.
