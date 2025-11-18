@@ -76,7 +76,10 @@ export function LeadsAnalytics({ leads }: LeadsAnalyticsProps) {
   });
 
   return (
-    <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(7, minmax(180px, 1fr))` }}>
+    <div
+      className="grid gap-3"
+      style={{ gridTemplateColumns: `repeat(7, minmax(180px, 1fr))` }}
+    >
       {LEAD_STATUSES.map((status) => {
         const count = leadsGroupedByStatus[status].length;
         const colors = STATUS_COLORS[status];
