@@ -40,13 +40,16 @@ export function LeadsAnalytics({ leads }: LeadsAnalyticsProps) {
   const conversionRate =
     totalLeads > 0 ? Math.round((resultLeads / totalLeads) * 100) : 0;
 
-  const qualifiedLeads = LEAD_STATUSES.filter((status) => status !== "No Stage")
-    .reduce((sum, status) => sum + leadsGroupedByStatus[status].length, 0);
+  const qualifiedLeads = LEAD_STATUSES.filter(
+    (status) => status !== "No Stage",
+  ).reduce((sum, status) => sum + leadsGroupedByStatus[status].length, 0);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <div className="bg-white rounded-lg border border-slate-200 p-6">
-        <div className="text-sm font-medium text-slate-600 mb-2">Total Leads</div>
+        <div className="text-sm font-medium text-slate-600 mb-2">
+          Total Leads
+        </div>
         <div className="text-3xl font-bold text-slate-900">{totalLeads}</div>
       </div>
 
