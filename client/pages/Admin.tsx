@@ -138,19 +138,23 @@ export default function Admin() {
             }),
           });
 
+          let responseData;
+          try {
+            responseData = await response.json();
+          } catch (_parseErr) {
+            throw new Error("Invalid response from server");
+          }
+
           if (!response.ok) {
-            const errorData = await response.json();
-            const errorMessage = errorData.error || "Failed to create account";
+            const errorMessage = responseData.error || "Failed to create account";
             throw new Error(errorMessage);
           }
 
-          const authData = await response.json();
-
-          if (!authData?.user) {
+          if (!responseData?.user) {
             throw new Error("No user returned from signup");
           }
 
-          authUserId = authData.user.id;
+          authUserId = responseData.user.id;
           console.log("Auth user created with ID:", authUserId);
         } catch (authErr) {
           console.error("Auth signup error:", authErr);
