@@ -48,6 +48,7 @@ export default function Salespersons() {
           title: "Success",
           description: "Sales person updated successfully",
         });
+        setEditingId(null);
       } else {
         await addSalesperson(formData);
         toast({
@@ -56,7 +57,12 @@ export default function Salespersons() {
         });
       }
 
-      closeForm();
+      setFormData({
+        name: "",
+        email: "",
+        phoneNumber: "",
+      });
+      setShowForm(false);
     } catch (error) {
       toast({
         title: "Error",
@@ -94,14 +100,14 @@ export default function Salespersons() {
     }
   };
 
-  const closeForm = () => {
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingId(null);
     setFormData({
       name: "",
       email: "",
       phoneNumber: "",
     });
-    setEditingId(null);
-    setShowForm(false);
   };
 
   if (isLoading) {
@@ -145,7 +151,7 @@ export default function Salespersons() {
           <div className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <button
-                onClick={closeForm}
+                onClick={handleCancel}
                 className="text-slate-500 hover:text-slate-700"
               >
                 <ArrowLeft className="w-6 h-6" />
@@ -214,7 +220,7 @@ export default function Salespersons() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={closeForm}
+                  onClick={handleCancel}
                   disabled={isSubmitting}
                 >
                   Cancel

@@ -139,29 +139,12 @@ export default function Admin() {
           });
 
           if (!response.ok) {
-            let errorMessage = "Failed to create account";
-            const contentType = response.headers.get("content-type");
-
-            if (contentType?.includes("application/json")) {
-              try {
-                const errorData = await response.json();
-                errorMessage = errorData.error || errorMessage;
-              } catch {
-                errorMessage = `Server error (${response.status})`;
-              }
-            } else {
-              errorMessage = `Server error (${response.status})`;
-            }
-
+            const errorData = await response.json();
+            const errorMessage = errorData.error || "Failed to create account";
             throw new Error(errorMessage);
           }
 
-          let authData;
-          try {
-            authData = await response.json();
-          } catch (parseError) {
-            throw new Error(`Invalid response format from server`);
-          }
+          const authData = await response.json();
 
           if (!authData?.user) {
             throw new Error("No user returned from signup");
