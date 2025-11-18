@@ -311,13 +311,19 @@ export default function CreateInvoice() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Package Price
+                  Package Price *
                 </label>
                 <Input
                   type="number"
-                  value={selectedPackage.price}
-                  disabled
-                  className="bg-slate-50"
+                  value={formData.packagePrice}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      packagePrice: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  placeholder="Enter package price"
+                  required
                 />
               </div>
               <div>
@@ -346,7 +352,7 @@ export default function CreateInvoice() {
                 <Input
                   type="number"
                   value={(
-                    selectedPackage.price *
+                    formData.packagePrice *
                     (formData.taxPercentage / 100)
                   ).toFixed(2)}
                   disabled
