@@ -105,42 +105,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           body: JSON.stringify({ email, password }),
         });
 
-        console.log("Auth response status:", response.status);
-        console.log("Auth response headers:", {
-          contentType: response.headers.get("content-type"),
-        });
-
-        const responseText = await response.text();
-        console.log("Auth response body:", responseText);
-
         if (!response.ok) {
-          let errorMessage = "Invalid email or password";
-          if (responseText) {
-            try {
-              const errorData = JSON.parse(responseText);
-              errorMessage = errorData.error || errorMessage;
-            } catch {
-              errorMessage = `Server error: ${responseText.substring(0, 100)}`;
-            }
-          }
+          const errorData = await response.json();
+          const errorMessage = errorData.error || "Invalid email or password";
           console.error("Auth sign in error:", errorMessage);
           throw new Error(errorMessage);
         }
 
-        if (!responseText) {
-          throw new Error(
-            "Server returned empty response. Please try again or contact support.",
-          );
-        }
-
-        try {
-          responseData = JSON.parse(responseText);
-        } catch (parseErr) {
-          console.error("Failed to parse response:", responseText);
-          throw new Error(
-            "Server returned invalid response. Please try again.",
-          );
-        }
+        responseData = await response.json();
       } catch (err) {
         if (err instanceof Error) {
           throw err;
