@@ -132,6 +132,33 @@ export function LeadDetailModal({
     }
   };
 
+  const handleAssignmentChange = async (newAssignedTo: string) => {
+    setAssignedTo(newAssignedTo);
+
+    if (onUpdate) {
+      try {
+        setIsUpdatingAssignment(true);
+        await onUpdate(lead.id, {
+          assignedTo: newAssignedTo || undefined,
+        });
+        toast({
+          title: "Success",
+          description: "Lead assignment updated",
+        });
+      } catch (error) {
+        console.error("Error updating assignment:", error);
+        setAssignedTo(lead.assignedTo || "");
+        toast({
+          title: "Error",
+          description: "Failed to update assignment",
+          variant: "destructive",
+        });
+      } finally {
+        setIsUpdatingAssignment(false);
+      }
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
