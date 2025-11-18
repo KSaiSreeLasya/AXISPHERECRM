@@ -38,7 +38,7 @@ NotFoundError: Failed to execute 'removeChild' on 'Node': The node to be removed
 AuthUnknownError: Failed to execute 'json' on 'Response': body stream already read
 ```
 
-**Root Cause:** Fly.io deployment environment has middleware/proxies that read HTTP response bodies before Supabase client can process them. Response bodies are streams that can only be read once.
+**Root Cause:** Deployment environment has middleware/proxies that read HTTP response bodies before Supabase client can process them. Response bodies are streams that can only be read once.
 
 **Fixes Applied:**
 
