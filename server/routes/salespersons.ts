@@ -7,7 +7,10 @@ const supabaseServiceKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 console.log("[Salespersons Route] Supabase URL loaded:", !!supabaseUrl);
-console.log("[Salespersons Route] Service Role Key loaded:", !!supabaseServiceKey);
+console.log(
+  "[Salespersons Route] Service Role Key loaded:",
+  !!supabaseServiceKey,
+);
 
 // Create Supabase client with service role key (bypasses RLS)
 const serverSupabaseAdmin =
