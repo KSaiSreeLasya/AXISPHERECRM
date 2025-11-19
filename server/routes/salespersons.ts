@@ -16,7 +16,9 @@ const serverSupabaseAdmin =
 export const handleDeleteSalesperson: RequestHandler = async (req, res) => {
   try {
     if (!serverSupabaseAdmin) {
-      console.error("Delete Salesperson Error: Supabase admin client not initialized");
+      console.error(
+        "Delete Salesperson Error: Supabase admin client not initialized",
+      );
       return res.status(500).json({
         error: "Server configuration error",
         details: "Missing Supabase service role key",
@@ -78,7 +80,9 @@ export const handleDeleteSalesperson: RequestHandler = async (req, res) => {
 export const handleUpdateSalesperson: RequestHandler = async (req, res) => {
   try {
     if (!serverSupabaseAdmin) {
-      console.error("Update Salesperson Error: Supabase admin client not initialized");
+      console.error(
+        "Update Salesperson Error: Supabase admin client not initialized",
+      );
       return res.status(500).json({
         error: "Server configuration error",
         details: "Missing Supabase service role key",
