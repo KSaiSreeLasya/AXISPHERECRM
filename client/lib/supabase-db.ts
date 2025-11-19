@@ -281,49 +281,64 @@ export async function updateSalesperson(
   id: string,
   updates: Partial<Salesperson>,
 ) {
-  const updateData: any = {};
+  try {
+    // Use server-side endpoint to bypass RLS restrictions
+    const response = await fetch("/api/salespersons/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        salespersonId: id,
+        updates,
+      }),
+    });
 
-  if (updates.name !== undefined) updateData.name = updates.name;
-  if (updates.email !== undefined) updateData.email = updates.email;
-  if (updates.phoneNumber !== undefined)
-    updateData.phone_number = updates.phoneNumber;
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMessage =
+        errorData.details || errorData.error || "Unknown error";
+      console.error("Error updating salesperson:", errorMessage);
+      throw new Error(`Failed to update salesperson: ${errorMessage}`);
+    }
 
-  const { error } = await supabase
-    .from("salespersons")
-    .update(updateData)
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error updating salesperson:", error);
-    throw error;
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Failed to update salesperson");
+    }
+  } catch (err) {
+    console.error("Exception updating salesperson:", err);
+    throw err;
   }
 }
 
 export async function deleteSalesperson(id: string) {
   try {
-    // First, delete all leads assigned to this salesperson
-    const { error: leadsError } = await supabase
-      .from("leads")
-      .delete()
-      .eq("assigned_to", id);
+    // Use server-side endpoint to bypass RLS restrictions
+    const response = await fetch("/api/salespersons/delete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        salespersonId: id,
+      }),
+    });
 
-    if (leadsError) {
-      console.error("Error deleting leads for salesperson:", leadsError);
-      throw leadsError;
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMessage =
+        errorData.details || errorData.error || "Unknown error";
+      console.error("Error deleting salesperson:", errorMessage);
+      throw new Error(`Failed to delete salesperson: ${errorMessage}`);
     }
 
-    // Then delete the salesperson
-    const { error: spError } = await supabase
-      .from("salespersons")
-      .delete()
-      .eq("id", id);
-
-    if (spError) {
-      console.error("Error deleting salesperson:", spError);
-      throw spError;
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Failed to delete salesperson");
     }
   } catch (error) {
-    console.error("Error in deleteSalesperson:", error);
+    console.error("Exception in deleteSalesperson:", error);
     throw error;
   }
 }
