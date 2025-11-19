@@ -281,21 +281,34 @@ export async function updateSalesperson(
   id: string,
   updates: Partial<Salesperson>,
 ) {
-  const updateData: any = {};
+  try {
+    // Use server-side endpoint to bypass RLS restrictions
+    const response = await fetch("/api/salespersons/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        salespersonId: id,
+        updates,
+      }),
+    });
 
-  if (updates.name !== undefined) updateData.name = updates.name;
-  if (updates.email !== undefined) updateData.email = updates.email;
-  if (updates.phoneNumber !== undefined)
-    updateData.phone_number = updates.phoneNumber;
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMessage =
+        errorData.details || errorData.error || "Unknown error";
+      console.error("Error updating salesperson:", errorMessage);
+      throw new Error(`Failed to update salesperson: ${errorMessage}`);
+    }
 
-  const { error } = await supabase
-    .from("salespersons")
-    .update(updateData)
-    .eq("id", id);
-
-  if (error) {
-    console.error("Error updating salesperson:", error);
-    throw error;
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Failed to update salesperson");
+    }
+  } catch (err) {
+    console.error("Exception updating salesperson:", err);
+    throw err;
   }
 }
 
